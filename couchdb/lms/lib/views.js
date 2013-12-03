@@ -74,28 +74,21 @@ exports.d2l_template = {
 			var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
 			var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
 			var translated_doc = {
-				'_id': subject_and_number[0] + '_' + base_number,
-				'sourcedid': {
-					'id': subject_and_number[0] + '_' + base_number
-				},
+				'id': subject_and_number[0] + '_' + base_number,
 				'grouptype': {
-					'typevalue': {
-						'text': 'Course Template',
-						'level': '4'
-					}
+					'text': 'Course Template',
+					'level': 4
 				},
 				'description': {
 					'short': subject_and_number[0] + '_' + base_number,
 					'long': subject_and_number[0] + ' ' + base_number
 				},
-				'relationship': {
-					'sourcedid': {
-						'id': doc['org']['id']
-					}
-				}
+				'relationships': [
+					doc['org']['id']
+				]
 			}
 
-			emit(translated_doc['_id'], translated_doc);
+			emit(translated_doc['id'], translated_doc);
 		}
 	},
 
