@@ -136,11 +136,8 @@ exports.d2l_enrollment = {
 		if (doc['type'] == 'member') {
 			var lmsutils = require('views/lib/lmsutils');
 			var translated_doc = {
-				'_id': doc._id,
-				'membership_sourcedid': {
-					'id': lmsutils.ps_to_bb_course_code(doc['membership_sourcedid']['id'])
-				},
-				'sourcedid': doc['sourcedid'],
+				'id': doc['sourcedid']['id'],
+				'membership_id': lmsutils.ps_to_bb_course_code(doc['membership_sourcedid']['id']) + '_SEC',
 				'role': {
 					'roletype': doc['role']['@roletype'],
 					'status': doc['role']['status']
