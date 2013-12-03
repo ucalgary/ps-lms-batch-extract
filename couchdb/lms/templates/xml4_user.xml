@@ -1,12 +1,12 @@
 	<person recstatus="2">
 		<sourcedid>
-			<id>{doc.sourcedid.id}</id>
+			<id>{doc.id}</id>
 		</sourcedid>
-		<userid>{doc.userid}</userid>
+		<userid>{doc.id}</userid>
 		<name>
 			<n>
-				<family>{doc.name.n.family}</family>
-				<given>{doc.name.n.given}</given>
+				<family>{doc.name.family}</family>
+				<given>{doc.name.given}</given>
 			</n>
 		</name>
 		<email>{doc.email}</email>

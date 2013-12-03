@@ -126,7 +126,16 @@ exports.d2l_offering = {
 exports.d2l_user = {
 	map: function(doc) {
 		if (doc['type'] == 'person') {
-			emit(doc._local_seq, doc);
+			var translated_doc = {
+				'id': doc['userid'],
+				'name': {
+					'given': doc['name']['n']['given'],
+					'family': doc['name']['n']['family']
+				},
+				'email': doc['email']
+			}
+
+			emit(doc._local_seq, translated_doc);
 		}
 	}
 }
