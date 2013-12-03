@@ -80,7 +80,7 @@ exports.d2l_template = {
 					'long': subject_and_number[0] + ' ' + base_number
 				},
 				'relationships': [
-					doc['org']['id']
+					doc['org']['id']		// department code (eg: HA)
 				]
 			}
 
@@ -112,8 +112,8 @@ exports.d2l_offering = {
 					'end': doc['timeframe']['end']['#text']
 				},
 				'relationships': [
-					doc['relationship']['sourcedid']['id'],				// semester
-					subject_and_number[0] + '_' + base_number			// template
+					doc['relationship']['sourcedid']['id'],				// semester (eg: 2141)
+					subject_and_number[0] + '_' + base_number			// template (eg: ACCT_217)
 				]
 			}
 
