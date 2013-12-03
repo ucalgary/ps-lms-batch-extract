@@ -75,10 +75,6 @@ exports.d2l_template = {
 			var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
 			var translated_doc = {
 				'id': subject_and_number[0] + '_' + base_number,
-				'grouptype': {
-					'text': 'Course Template',
-					'level': 4
-				},
 				'description': {
 					'short': subject_and_number[0] + '_' + base_number,
 					'long': subject_and_number[0] + ' ' + base_number

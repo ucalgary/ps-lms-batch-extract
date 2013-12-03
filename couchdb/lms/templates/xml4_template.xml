@@ -3,7 +3,7 @@
 			<id>{doc.id}</id>
 		</sourcedid>
 		<grouptype>
-			<typevalue level="{doc.grouptype.level}">{doc.grouptype.text}</typevalue>
+			<typevalue level="4">Course Template</typevalue>
 		</grouptype>
 		<description>
 			<short>{doc.description.short}</short>
