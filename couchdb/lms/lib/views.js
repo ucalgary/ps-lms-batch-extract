@@ -99,6 +99,7 @@ exports.d2l_offering = {
 		if (doc['type'] = 'course' && doc['grouptype']['typevalue']['@level'] == '0') {
 			var lmsutils = require('views/lib/lmsutils');
 			var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
+			var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
 			var translated_doc = {
 				'id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
 				'section_id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']) + '_SEC',
@@ -111,8 +112,8 @@ exports.d2l_offering = {
 					'end': doc['timeframe']['end']['#text']
 				},
 				'relationships': [
-					doc['relationship']['sourcedid']['id'],
-					subject_and_number[0] + '_' + subject_and_number[1]
+					doc['relationship']['sourcedid']['id'],				// semester
+					subject_and_number[0] + '_' + base_number			// template
 				]
 			}
 
