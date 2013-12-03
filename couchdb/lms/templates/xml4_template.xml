@@ -1,0 +1,21 @@
+	<group recstatus="2">
+		<sourcedid>
+			<id>{doc.sourcedid.id}</id>
+		</sourcedid>
+		<grouptype>
+			<typevalue level="4">Course Template</typevalue>
+		</grouptype>
+		<description>
+			<short>{doc.description.short}</short>
+			<long>{doc.description.long}</long>
+		</description>
+		<timeframe>
+			<begin>{doc.timeframe.begin}</begin>
+			<end>{doc.timeframe.end}</end>
+		</timeframe>
+		<relationship relation="1">
+			<sourcedid>
+				<id>{doc.relationship.sourcedid.id}</id>
+			</sourcedid>
+		</relationship>
+	</group>

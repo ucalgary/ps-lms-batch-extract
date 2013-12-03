@@ -1,0 +1,24 @@
+	<group recstatus="2">
+		<sourcedid>
+			<id>{doc.sourcedid.id}</id>
+		</sourcedid>
+		<grouptype>
+			<typevalue level="5">Course Offering</typevalue>
+		</grouptype>
+		<description>
+			<short>{doc.description.short}</short>
+			<long>{doc.description.long}</long>
+		</description>
+		<timeframe>
+			<begin>{doc.timeframe.begin}</begin>
+			<end>{doc.timeframe.end}</end>
+		</timeframe>
+{#doc.relationship}		<relationship relation="1">
+			<sourcedid>
+				<id>{sourcedid.id}</id>
+			</sourcedid>
+		</relationship>
+{/doc.relationship}		<extension>
+			<status>0</status>
+		</extension>
+	</group>

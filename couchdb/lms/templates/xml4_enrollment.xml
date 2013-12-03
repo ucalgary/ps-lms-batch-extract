@@ -1,0 +1,13 @@
+	<membership recstatus="2">
+		<sourcedid>
+			<id>{doc.membership_sourcedid.id}_SEC</id>
+		</sourcedid>
+		<member>
+			<sourcedid>
+				<id>{doc.sourcedid.id}</id>
+			</sourcedid>
+			<role roletype="{doc.role.roletype}">
+				<status>{doc.role.status}</status>
+			</role>
+		</member>
+	</membership>

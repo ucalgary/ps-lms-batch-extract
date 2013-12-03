@@ -1,0 +1,17 @@
+	<group recstatus="2">
+		<sourcedid>
+			<id>{doc.sourcedid.id}_SEC</id>
+		</sourcedid>
+		<grouptype>
+			<typevalue level="6">Section</typevalue>
+		</grouptype>
+		<description>
+			<short>{doc.description.short}</short>
+			<long>{doc.description.long}</long>
+		</description>
+		<relationship relation="1">
+			<sourcedid>
+				<id>{doc.sourcedid.id}</id>
+			</sourcedid>
+		</relationship>
+	</group>

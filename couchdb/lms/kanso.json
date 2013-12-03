@@ -1,0 +1,23 @@
+{
+	"name": "lms",
+	"version": "0.0.1",
+	"description": "Contains functions to ingest LMS data from PeopleSoft and transform it for Desire2Learn and Ares.",
+	"modules": [
+		"lib",
+		"views"
+	],
+	"dust": {
+		"templates": "templates"
+	},
+	"duality": {
+		
+	},
+	"load": "lib/app",
+	"dependencies": {
+		"modules": null,
+		"properties": null,
+		"dust": null,
+		"duality": null,
+		"duality-dust": null
+	}
+}
