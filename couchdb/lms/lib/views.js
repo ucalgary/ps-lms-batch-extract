@@ -104,30 +104,19 @@ exports.d2l_offering = {
 			var lmsutils = require('views/lib/lmsutils');
 			var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
 			var translated_doc = {
-				'_id': doc._id,
-				'sourcedid': {
-					'id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id'])
+				'id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
+				'section_id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']) + '_SEC',
+				'description': {
+					'short': doc['description']['short'],
+					'long': doc['description']['long']
 				},
-				'grouptype': {
-					'typevalue': {
-						'text': doc['grouptype']['typevalue']['#text'],
-						'level': doc['grouptype']['typevalue']['@level']
-					}
-				},
-				'description': doc['description'],
 				'timeframe': {
 					'begin': doc['timeframe']['begin']['#text'],
 					'end': doc['timeframe']['end']['#text']
 				},
-				'relationship': [
-					doc['relationship'],
-					{
-						'sourcedid': {
-							'id': subject_and_number[0] + '_' + subject_and_number[1]
-						},
-						'@relation': '1',
-						'label': 'putting course ' + doc._id + ' in template ' + subject_and_number[0] + '_' + subject_and_number[1]
-					}
+				'relationships': [
+					doc['relationship']['sourcedid']['id'],
+					subject_and_number[0] + '_' + subject_and_number[1]
 				]
 			}
 

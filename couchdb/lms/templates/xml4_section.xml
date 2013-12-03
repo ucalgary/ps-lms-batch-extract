@@ -1,6 +1,6 @@
 	<group recstatus="2">
 		<sourcedid>
-			<id>{doc.sourcedid.id}_SEC</id>
+			<id>{doc.section_id}</id>
 		</sourcedid>
 		<grouptype>
 			<typevalue level="6">Section</typevalue>
@@ -11,7 +11,7 @@
 		</description>
 		<relationship relation="1">
 			<sourcedid>
-				<id>{doc.sourcedid.id}</id>
+				<id>{doc.id}</id>
 			</sourcedid>
 		</relationship>
 	</group>
