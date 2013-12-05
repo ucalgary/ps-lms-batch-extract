@@ -90,7 +90,7 @@ exports.remove_couch_md = function(doc) {
 
 	var mod_doc = {};
 	for (var key in doc) {
-		if (key != '_rev' && key != '_revisions') {
+		if (key.charAt(0) != '_') {
 			mod_doc[key] = doc[key];
 		}
 	}
