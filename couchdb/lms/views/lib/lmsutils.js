@@ -74,8 +74,8 @@ exports.ps_docs_equal = function(o1, o2) {
 	// This is fast and limited.
 	// If the key order changes, this will return false
 
-	o1 = exports.remove_couch_md(o1);
-	o2 = exports.remove_couch_md(o2);
+	o1 = exports.remove_non_ps_md(o1);
+	o2 = exports.remove_non_ps_md(o2);
 
 	log('o1: ' + JSON.stringify(o1));
 	log('o2: ' + JSON.stringify(o2));
@@ -83,14 +83,14 @@ exports.ps_docs_equal = function(o1, o2) {
 	return JSON.stringify(o1) === JSON.stringify(o2);
 }
 
-exports.remove_couch_md = function(doc) {
+exports.remove_non_ps_md = function(doc) {
 	if (!'_rev' in doc) {
 		return doc;
 	}
 
 	var mod_doc = {};
 	for (var key in doc) {
-		if (key.charAt(0) != '_') {
+		if (key.charAt(0) != '_' && key != 'mapping') {
 			mod_doc[key] = doc[key];
 		}
 	}
