@@ -70,7 +70,7 @@ exports.subject_and_number_from_ps_code = function(ps_code) {
 	return [ps_code_parts[2], ps_code_parts[3]];
 }
 
-exports.docs_equal = function(o1, o2) {
+exports.ps_docs_equal = function(o1, o2) {
 	// This is fast and limited.
 	// If the key order changes, this will return false
 
