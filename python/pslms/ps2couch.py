@@ -33,6 +33,9 @@ class PS2Couch(LMSObject):
 		doc_id = doc.get('sourcedid', {}).get('id')
 
 		if doc_id:
+			# Unconditionally change underscores to hyphens.
+			# The data from PeopleSoft seems to vary between underscores and hyphens.
+			doc_id.replace('_', '-')
 			doc['_id'] = doc_id
 
 		return doc
