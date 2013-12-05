@@ -9,9 +9,9 @@
 			<short>{doc.description.short}</short>
 			<long>{doc.description.long}</long>
 		</description>
-		<relationship relation="1">
+{#doc.relationships}		<relationship relation="1">
 			<sourcedid>
-				<id>{doc.id}</id>
+				<id>{.}</id>
 			</sourcedid>
 		</relationship>
-	</group>
+{/doc.relationships}	</group>
