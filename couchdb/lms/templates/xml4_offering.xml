@@ -9,10 +9,6 @@
 			<short>{doc.description.short}</short>
 			<long>{doc.description.long}</long>
 		</description>
-		<timeframe>
-			<begin>{doc.timeframe.begin}</begin>
-			<end>{doc.timeframe.end}</end>
-		</timeframe>
 {#doc.relationships}		<relationship relation="1">
 			<sourcedid>
 				<id>{.}</id>
