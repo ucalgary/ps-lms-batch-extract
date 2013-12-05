@@ -11,7 +11,11 @@ exports.xml4_template = function(head, req) {
 
 // 2 Offerings
 exports.xml4_offering = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_offering.xml', null);
+	var offering_predicate = function(row) {
+		return !('mapping' in row);
+	}
+
+	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate);
 }
 
 // 3 Sections
