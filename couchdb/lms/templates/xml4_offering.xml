@@ -5,8 +5,12 @@
 		<grouptype>
 			<typevalue level="5">Course Offering</typevalue>
 		</grouptype>
+		<timeframe>
+			<begin></begin>
+			<end></end>
+		</timeframe>
 		<description>
-			<short>{doc.description.short}</short>
+			<short>{doc.id}</short>
 			<long>{doc.description.long}</long>
 		</description>
 {#doc.relationships}		<relationship relation="1">

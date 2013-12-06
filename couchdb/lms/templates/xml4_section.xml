@@ -6,7 +6,7 @@
 			<typevalue level="6">Section</typevalue>
 		</grouptype>
 		<description>
-			<short>{doc.description.short}</short>
+			<short>{doc.section_id}</short>
 			<long>{doc.description.long}</long>
 		</description>
 {#doc.section_relationships}		<relationship relation="1">
