@@ -12,7 +12,7 @@ exports.xml4_template = function(head, req) {
 // 2 Offerings
 exports.xml4_offering = function(head, req) {
 	var offering_predicate = function(row) {
-		return !('mapping' in row.doc ? row.doc : row.value);
+		return !('mapping' in (row.doc ? row.doc : row.value));
 	}
 
 	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate);
