@@ -6,7 +6,7 @@ var templates = require('duality/templates');
 
 // 1 Templates
 exports.xml4_template = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_template.xml', null;
+	exports.xml4_document(head, req, 'xml4_template.xml', null);
 }
 
 // 2 Offerings
