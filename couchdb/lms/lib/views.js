@@ -1,37 +1,3 @@
-// exports.translated_membership = {
-// 	map: function(doc) {
-// 		var lmsutils = require('views/lib/lmsutils');
-// 		var translated_doc = {
-// 			'_id': doc._id,
-// 			'sourcedid': {
-// 				'id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id'])
-// 			},
-// 			'member': []
-// 		};
-
-// 		// var roletype_mapping = {
-// 		// 	'01': 'Student',
-// 		// 	'02': 'Instructor'
-// 		// };
-
-// 		for (var member_idx in doc['member']) {
-// 			var member = doc['member'][member_idx];
-// 			var translated_member = {
-// 				'sourcedid': member['sourcedid'],
-// 				'role': {
-// 					// 'roletype': roletype_mapping[member['role']['@roletype']],
-// 					'roletype': member['role']['@roletype'],
-// 					'status': member['role']['status']
-// 				}
-// 			}
-
-// 			translated_doc['member'].push(translated_member);
-// 		}
-
-// 		emit(doc._local_seq, translated_doc);
-// 	}
-// }
-
 // ------------------------------------------------------------
 // Utility views
 // ------------------------------------------------------------
