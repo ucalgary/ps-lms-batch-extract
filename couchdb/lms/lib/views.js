@@ -120,7 +120,8 @@ exports.d2l_offering = {
 					lmsutils.ps_to_bb_course_code(('mapping' in doc) ? 
 					                              doc['mapping']['sourcedid']['id'] :
 					                              doc['sourcedid']['id'])
-				]
+				],
+				'is_mapped': ('mapping' in doc)
 			}
 
 			emit(doc._local_seq, translated_doc);
