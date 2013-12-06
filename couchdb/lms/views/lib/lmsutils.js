@@ -17,8 +17,12 @@ exports.ps_to_bb_course_code = function(ps_code) {
 	// PS: 2137-UCALG-ENGL-201-LEC16-75668
 	// BB: W2013ENGL201LEC116
 
+	return exports.ps_to_bb_course_components(ps_code).join('');
+}
+
+exports.ps_to_bb_course_components = function(ps_code) {
 	var ps_code_parts = ps_code.split(/[-_]/);
-	if (ps_code_parts.length != 6) return ps_code;
+	if (ps_code_parts.length != 6) return null;
 	var course_section_parts = /(\D+)(\d+)/.exec(ps_code_parts[4])
 
 	var course_year = ps_code_parts[0].substring(0, 1) + '0' + ps_code_parts[0].substring(1, 3);
@@ -34,7 +38,12 @@ exports.ps_to_bb_course_code = function(ps_code) {
 															'SEMS':'S' }[course_section_parts[1]];
 	var course_section_number = course_section_parts[2].replace(/\D/g, '');
 
-	return course_session + course_year + ps_code_parts[2] + course_number + course_section_type + course_section_number;
+	return [course_session,					// single character semester (P, S, F, W)
+	        course_year,						// four digit year (2014)
+	        ps_code_parts[2],				// subject code (ENGL)
+	        course_number,					// course number (201)
+	        course_section_type,		// single character section (L, B, T, S, C, P)
+	        course_section_number]	// section number (01)
 }
 
 exports.ps_to_ares_semester = function(ps_code) {
