@@ -38,12 +38,12 @@ exports.ps_to_bb_course_components = function(ps_code) {
 															'SEMS':'S' }[course_section_parts[1]];
 	var course_section_number = course_section_parts[2].replace(/\D/g, '');
 
-	return [course_session,					// single character semester (P, S, F, W)
-	        course_year,						// four digit year (2014)
-	        ps_code_parts[2],				// subject code (ENGL)
-	        course_number,					// course number (201)
-	        course_section_type,		// single character section (L, B, T, S, C, P)
-	        course_section_number]	// section number (01)
+	return [course_session,					// 0: single character semester (P, S, F, W)
+	        course_year,						// 1: four digit year (2014)
+	        ps_code_parts[2],				// 2: subject code (ENGL)
+	        course_number,					// 3: course number (201)
+	        course_section_type,		// 4: single character section (L, B, T, S, C, P)
+	        course_section_number]	// 5: section number (01)
 }
 
 exports.ps_to_ares_semester = function(ps_code) {
