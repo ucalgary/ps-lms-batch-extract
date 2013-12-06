@@ -83,10 +83,6 @@ exports.d2l_offering = {
 					'short': description_prefix + doc['description']['short'],
 					'long': description_prefix + doc['description']['long']
 				},
-				'timeframe': {
-					'begin': doc['timeframe']['begin']['#text'],
-					'end': doc['timeframe']['end']['#text']
-				},
 				'relationships': [
 					doc['relationship']['sourcedid']['id'],				// semester (eg: 2141)
 					bb_course_code[2] + '_' + base_number			// template (eg: ACCT_217)
