@@ -67,7 +67,7 @@ exports.d2l_offering = {
 			var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
 			var bb_course_code = lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']);
 			var semester_name = { 'P':'Spring', 'S':'Summer', 'F':'Fall', 'W':'Winter' }[bb_course_components[0]];
-			var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
+			var base_number = /(\d+).*/.exec(bb_course_components[3])[1];
 			var description_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
 			                       + bb_course_components[3] + ' '  // course number (201)
 			                       + bb_course_components[4]        // single character section (L, B, T, S, C, P)
