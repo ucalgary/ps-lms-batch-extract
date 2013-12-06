@@ -64,15 +64,24 @@ exports.d2l_offering = {
 	map: function(doc) {
 		if (doc['type'] = 'course' && doc['grouptype']['typevalue']['@level'] == '0') {
 			var lmsutils = require('views/lib/lmsutils');
-			var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
-			var ares_semester = lmsutils.ps_to_ares_semester(doc['sourcedid']['id']);
+			var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
+			var bb_course_code = lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']);
+			var semester_name = { 'P':'Spring', 'S':'Summer', 'F':'Fall', 'W':'Winter' }[bb_course_components[0]];
 			var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
+			var description_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
+			                       + bb_course_components[3] + ' '  // course number (201)
+			                       + bb_course_components[4]        // single character section (L, B, T, S, C, P)
+			                       + bb_course_components[5]        // section number (01)
+			                       + ' — ('
+			                       + semester_name + ' '            // semester name (Spring, Summer, Fall, Winter)
+			                       + bb_course_components[1]        // four digit year (2014)
+			                       + ') — ';
 			var translated_doc = {
-				'id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
-				'section_id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']) + '_SEC',
+				'id': bb_course_code
+				'section_id': bb_course_code + '_SEC',
 				'description': {
-					'short': subject_and_number[0] + ' ' + subject_and_number[1] + ' — (' + ares_semester + ') — ' + doc['description']['short'],
-					'long': subject_and_number[0] + ' ' + subject_and_number[1] + ' — (' + ares_semester + ') — ' + doc['description']['long']
+					'short': description_prefix + doc['description']['short'],
+					'long': description_prefix + doc['description']['long']
 				},
 				'timeframe': {
 					'begin': doc['timeframe']['begin']['#text'],
@@ -80,7 +89,7 @@ exports.d2l_offering = {
 				},
 				'relationships': [
 					doc['relationship']['sourcedid']['id'],				// semester (eg: 2141)
-					subject_and_number[0] + '_' + base_number			// template (eg: ACCT_217)
+					bb_course_code[2] + '_' + base_number			// template (eg: ACCT_217)
 				],
 				'section_relationships': [
 					lmsutils.ps_to_bb_course_code(('mapping' in doc) ? 
