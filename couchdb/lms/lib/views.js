@@ -77,7 +77,7 @@ exports.d2l_offering = {
 			                       + bb_course_components[1]        // four digit year (2014)
 			                       + ') — ';
 			var translated_doc = {
-				'id': bb_course_code
+				'id': bb_course_code,
 				'section_id': bb_course_code + '_SEC',
 				'description': {
 					'short': description_prefix + doc['description']['short'],
