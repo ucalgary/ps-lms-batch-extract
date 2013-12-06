@@ -99,13 +99,14 @@ exports.d2l_offering = {
 		if (doc['type'] = 'course' && doc['grouptype']['typevalue']['@level'] == '0') {
 			var lmsutils = require('views/lib/lmsutils');
 			var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
+			var ares_semester = lmsutils.ps_to_ares_semester(doc['sourcedid']['id']);
 			var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
 			var translated_doc = {
 				'id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
 				'section_id': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']) + '_SEC',
 				'description': {
-					'short': doc['description']['short'],
-					'long': doc['description']['long']
+					'short': subject_and_number[0] + ' ' + subject_and_number[1] + ' — (' + ares_semester + ') — ' + doc['description']['short'],
+					'long': subject_and_number[0] + ' ' + subject_and_number[1] + ' — (' + ares_semester + ') — ' + doc['description']['long']
 				},
 				'timeframe': {
 					'begin': doc['timeframe']['begin']['#text'],
