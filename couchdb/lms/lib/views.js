@@ -68,20 +68,21 @@ exports.d2l_offering = {
 			var bb_course_code = lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']);
 			var semester_name = { 'P':'Spring', 'S':'Summer', 'F':'Fall', 'W':'Winter' }[bb_course_components[0]];
 			var base_number = /(\d+).*/.exec(bb_course_components[3])[1];
-			var description_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
-			                       + bb_course_components[3] + ' '  // course number (201)
-			                       + bb_course_components[4]        // single character section (L, B, T, S, C, P)
-			                       + bb_course_components[5]        // section number (01)
-			                       + ' — ('
-			                       + semester_name + ' '            // semester name (Spring, Summer, Fall, Winter)
-			                       + bb_course_components[1]        // four digit year (2014)
-			                       + ') — ';
+			var short_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
+			                 + bb_course_components[3] + ' '  // course number (201)
+			                 + bb_course_components[4]        // single character section (L, B, T, S, C, P)
+			                 + bb_course_components[5];       // section number (01)
+			var long_prefix  = short_prefix
+			                 + ' — ('
+			                 + semester_name + ' '            // semester name (Spring, Summer, Fall, Winter)
+			                 + bb_course_components[1]        // four digit year (2014)
+			                 + ') — ';
 			var translated_doc = {
 				'id': bb_course_code,
 				'section_id': bb_course_code + '_SEC',
 				'description': {
-					'short': description_prefix + doc['description']['short'],
-					'long': description_prefix + doc['description']['long']
+					'short': short_prefix,
+					'long': long_prefix + doc['description']['long']
 				},
 				'relationships': [
 					doc['relationship']['sourcedid']['id'],				// semester (eg: 2141)
