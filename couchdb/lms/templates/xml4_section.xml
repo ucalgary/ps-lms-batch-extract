@@ -7,7 +7,7 @@
 		</grouptype>
 		<description>
 			<short>{doc.section_id}</short>
-			<long>{doc.description.long}</long>
+			<long>{doc.description.short}</long>
 		</description>
 {#doc.section_relationships}		<relationship relation="1">
 			<sourcedid>
