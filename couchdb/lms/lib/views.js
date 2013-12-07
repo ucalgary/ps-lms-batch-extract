@@ -85,7 +85,7 @@ exports.d2l_offering = {
 				},
 				'relationships': [
 					doc['relationship']['sourcedid']['id'],				// semester (eg: 2141)
-					bb_course_code[2] + '_' + base_number			// template (eg: ACCT_217)
+					bb_course_components[2] + '_' + base_number			// template (eg: ACCT_217)
 				],
 				'section_relationships': [
 					lmsutils.ps_to_bb_course_code(('mapping' in doc) ? 
