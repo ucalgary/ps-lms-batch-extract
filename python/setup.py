@@ -18,7 +18,7 @@ setup(
 	description = 'Processing scripts to support PeopleSoft LMS to D2L data feeds.',
 
 	packages = find_packages(),
-	include_package_date = True,
+	#include_package_date = True,
 	install_requires = [
 		'CouchDB>=0.9',
 		'python_daemon>=1.6',
