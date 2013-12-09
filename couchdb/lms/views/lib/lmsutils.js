@@ -23,7 +23,7 @@ exports.ps_to_bb_course_code = function(ps_code) {
 exports.ps_to_bb_course_components = function(ps_code) {
 	var ps_code_parts = ps_code.split(/[-_]/);
 	if (ps_code_parts.length != 6) return null;
-	var course_section_parts = /(\D+)(\d+)/.exec(ps_code_parts[4])
+	var course_section_parts = /(\D+)(.*)/.exec(ps_code_parts[4])
 
 	var course_year = ps_code_parts[0].substring(0, 1) + '0' + ps_code_parts[0].substring(1, 3);
 	var course_session = { 3:'P', 5:'S', 7:'F', 1:'W' }[ps_code_parts[0].charAt(3)];
@@ -35,7 +35,8 @@ exports.ps_to_bb_course_components = function(ps_code) {
 															'LABB':'B',
 															'TUT':'T',
 															'TUTT':'T',
-															'SEMS':'S' }[course_section_parts[1]];
+															'SEMS':'S',
+															'ALL':'ALL' }[course_section_parts[1]];
 	var course_section_number = course_section_parts[2].replace(/\D/g, '');
 
 	return [course_session,					// 0: single character semester (P, S, F, W)
