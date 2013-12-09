@@ -22,8 +22,7 @@ setup(
 	install_requires = [
 		'CouchDB>=0.9',
 		'python_daemon>=1.6',
-		'argparse>=1.1',
-		'pycurl>='
+		'argparse>=1.1'
 	],
 
 	entry_points = {
