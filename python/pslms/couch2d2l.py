@@ -91,9 +91,13 @@ class Couch2D2L(LMSObject):
 		if args.upload:
 			with file(temp_done_file):
 				os.utime(temp_done_file, None)
-			pipe = subprocess.Popen(['sftp', 'UCALGARYSFTPUSER@204.92.18.64:/TEST/Holding_Tank/'], stdin=subprocess.PIPE).stdin
-			pipe.write('put %s\n' % temp_feed_file)
-			pipe.write('put %s\n' % temp_done_file)
+			proc = subprocess.Popen(['sftp', 'UCALGARYSFTPUSER@204.92.18.64:/TEST/Holding_Tank/'], stdin=subprocess.PIPE)
+			commands = 'put %s\nput %s\nbye\n' % (temp_feed_file, temp_done_file)
+			proc.communicate(input=commands)
+			
+			# pipe.write('put %s\n' % temp_feed_file)
+			# pipe.write('put %s\n' % temp_done_file)
+			# pipe.write('bye\n')
 
 		shutil.rmtree(temp_dir)
 
