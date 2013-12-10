@@ -2,6 +2,7 @@
 # coding=utf-8
 
 import datetime
+import os
 import shutil
 import subprocess
 import sys
@@ -80,6 +81,7 @@ class Couch2D2L(LMSObject):
 		# Download the data to a file
 		temp_dir = tempfile.gettempdir()
 		temp_feed_file = '%s/%s' % (temp_dir, feed_name)
+		temp_done_file = '%s/%s' % (temp_dir, done_name)
 		subprocess.check_call(['curl', '-o', temp_feed_file, feed_url])
 		shutil.copyfile(temp_feed_file, feed_name)
 
@@ -87,14 +89,17 @@ class Couch2D2L(LMSObject):
 			shutil.copyfile(temp_feed_file, feed_name)
 
 		if args.upload:
+			with file(temp_done_file):
+				os.utime(temp_done_file, None)
 			pipe = subprocess.Popen(['sftp', 'UCALGARYSFTPUSER@204.92.18.64:/TEST/Holding_Tank/'], stdin=subprocess.PIPE).stdin
 			pipe.write('put %s\n' % temp_feed_file)
+			pipe.write('put %s\n' % temp_done_file)
 
 		shutil.rmtree(temp_dir)
 
-		print feed_url
-		print feed_name
-		print done_name
+		# print feed_url
+		# print feed_name
+		# print done_name
 
 def main(args=None):
 	Couch2D2L(
