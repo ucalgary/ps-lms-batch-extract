@@ -2,6 +2,7 @@
 # coding=utf-8
 
 import datetime
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -54,6 +55,7 @@ class Couch2D2L(LMSObject):
 
 		parser.add_argument('db', help='CouchDB connection name')
 		parser.add_argument('feed', help='D2L XML4 feed name')
+		parser.add_argument('--test', action='store_true', help='if specified, uploads to D2L test instead of prod')
 		parser.add_argument('--upload', action='store_true', help='upload to D2L Holding Tank')
 		parser.add_argument('--write', action='store_true', help='write to file')
 
@@ -74,6 +76,21 @@ class Couch2D2L(LMSObject):
 		substitutions = {'year':today.year, 'month':today.month, 'day':today.day}
 		feed_name = feed_properties['name_format'] % substitutions
 		done_name = feed_properties['done_format'] % substitutions
+
+		# Download the data to a file
+		temp_dir = tempfile.gettempdir()
+		temp_feed_file = '%s/%s' % (temp_dir, feed_name)
+		subprocess.check_call(['curl', '-o', temp_feed_file, feed_url])
+		shutil.copyfile(temp_feed_file, feed_name)
+
+		if args.write:
+			shutil.copyfile(temp_feed_file, feed_name)
+
+		if args.upload:
+			pipe = subprocess.Popen(['sftp', 'UCALGARYSFTPUSER@204.92.18.64:/TEST/Holding_Tank/'], stdin=subprocess.PIPE).stdin
+			pipe.write('put %s\n' % temp_feed_file)
+
+		shutil.rmtree(temp_dir)
 
 		print feed_url
 		print feed_name
