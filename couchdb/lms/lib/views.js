@@ -66,40 +66,38 @@ exports.d2l_offering = {
 			var lmsutils = require('views/lib/lmsutils');
 			var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
 
-			if (bb_course_components[4] == 'L' || bb_course_components[4] == 'S') {
-				var bb_course_code = lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']);
-				var semester_name = { 'P':'Spring', 'S':'Summer', 'F':'Fall', 'W':'Winter' }[bb_course_components[0]];
-				var base_number = /(\d+).*/.exec(bb_course_components[3])[1];
-				var short_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
-				                 + bb_course_components[3] + ' '  // course number (201)
-				                 + bb_course_components[4]        // single character section (L, B, T, S, C, P)
-				                 + bb_course_components[5];       // section number (01)
-				var long_prefix  = short_prefix
-				                 + ' — ('
-				                 + semester_name + ' '            // semester name (Spring, Summer, Fall, Winter)
-				                 + bb_course_components[1]        // four digit year (2014)
-				                 + ') — ';
-				var translated_doc = {
-					'id': bb_course_code,
-					'section_id': bb_course_code + '_SEC',
-					'description': {
-						'short': short_prefix,
-						'long': long_prefix + doc['description']['long']
-					},
-					'relationships': [
-						doc['relationship']['sourcedid']['id'],				// semester (eg: 2141)
-						bb_course_components[2] + '_' + base_number			// template (eg: ACCT_217)
-					],
-					'section_relationships': [
-						lmsutils.ps_to_bb_course_code(('mapping' in doc) ? 
-						                              doc['mapping']['sourcedid']['id'] :
-						                              doc['sourcedid']['id'])
-					],
-					'is_mapped': ('mapping' in doc)
-				}
-
-				emit(doc._local_seq, translated_doc);
+			var bb_course_code = lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']);
+			var semester_name = { 'P':'Spring', 'S':'Summer', 'F':'Fall', 'W':'Winter' }[bb_course_components[0]];
+			var base_number = /(\d+).*/.exec(bb_course_components[3])[1];
+			var short_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
+			                 + bb_course_components[3] + ' '  // course number (201)
+			                 + bb_course_components[4]        // single character section (L, B, T, S, C, P)
+			                 + bb_course_components[5];       // section number (01)
+			var long_prefix  = short_prefix
+			                 + ' - ('
+			                 + semester_name + ' '            // semester name (Spring, Summer, Fall, Winter)
+			                 + bb_course_components[1]        // four digit year (2014)
+			                 + ') - ';
+			var translated_doc = {
+				'id': bb_course_code,
+				'section_id': bb_course_code + '_SEC',
+				'description': {
+					'short': short_prefix,
+					'long': long_prefix + doc['description']['long']
+				},
+				'relationships': [
+					doc['relationship']['sourcedid']['id'],				// semester (eg: 2141)
+					bb_course_components[2] + '_' + base_number			// template (eg: ACCT_217)
+				],
+				'section_relationships': [
+					lmsutils.ps_to_bb_course_code(('mapping' in doc) ? 
+					                              doc['mapping']['sourcedid']['id'] :
+					                              doc['sourcedid']['id'])
+				],
+				'is_mapped': ('mapping' in doc)
 			}
+
+			emit(doc._local_seq, translated_doc);
 		}
 	}
 }
@@ -139,6 +137,29 @@ exports.d2l_enrollment = {
 			emit(doc._local_seq, translated_doc);
 		}
 	}
+}
+
+// List all mappings
+exports.d2l_list_mappings = {
+    map: function(doc) {
+	if (doc['mapping']){
+	    var lmsutils = require('views/lib/lmsutils');
+	    var bb_code = lmsutils.ps_to_bb_course_code(doc['mapping']['sourcedid']['id']);
+	    
+	    var translated_doc = {
+		'source' : {
+		    'bb_code' : lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
+		    'ps_code' : doc['sourcedid']['id']
+		},
+		'destination' : {
+		    'bb_code' : lmsutils.ps_to_bb_course_code(doc['mapping']['sourcedid']['id']),
+		    'ps_code' : doc['mapping']['sourcedid']['id']
+		}
+	    }
+
+	    emit(doc['sourcedid']['id'], translated_doc);
+	}	
+    }
 }
 
 // ------------------------------------------------------------
