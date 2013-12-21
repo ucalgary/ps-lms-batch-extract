@@ -17,7 +17,7 @@ exports.ps_to_bb_course_code = function(ps_code) {
 	// PS: 2137-UCALG-ENGL-201-LEC16-75668
 	// BB: W2013ENGL201LEC116
 
-	return exports.ps_to_bb_course_components(ps_code).join('');
+        return exports.ps_to_bb_course_components(ps_code).join('').replace(/\./g, "");
 }
 
 exports.ps_to_bb_course_components = function(ps_code) {
