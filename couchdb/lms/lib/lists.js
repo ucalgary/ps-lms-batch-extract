@@ -63,6 +63,33 @@ exports.xml4_document = function(head, req, template, predicate) {
 }
 
 // ------------------------------------------------------------
+// CSV/text lists for general information usage
+// ------------------------------------------------------------
+
+// list all defined mappings in CSV file
+exports.list_mappings = function(head, req) {
+	exports.text_document(head, req, 'list_mappings.txt');
+}
+
+exports.text_document = function(head, req, template) {
+	var row = null;
+
+	start({
+		code: 200,
+		headers: {
+			'Content-Type': 'text/csv'
+		}
+	});
+
+	while (row = getRow()) {
+		send(templates.render(template, req, {
+			doc: row.doc ? row.doc : row.value
+		}));
+	}
+}
+
+
+// ------------------------------------------------------------
 // Tab-delimited lists for Atlas Systems Ares
 // ------------------------------------------------------------
 
