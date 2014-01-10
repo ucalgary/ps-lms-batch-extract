@@ -39,11 +39,19 @@ exports.d2l_template = {
 			var lmsutils = require('views/lib/lmsutils');
 			var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
 			var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
+			var suffix = '';
+
+			// keep Qatar templates separate so that they are organized in their
+			// own faculty/department
+			if (doc['org']['id'] == 'QA') {
+			    suffix = 'Q';
+			}
+
 			var translated_doc = {
-				'id': subject_and_number[0] + '_' + base_number,
+				'id': subject_and_number[0] + '_' + base_number + suffix,
 				'description': {
-					'short': subject_and_number[0] + '_' + base_number,
-					'long': subject_and_number[0] + ' ' + base_number
+					'short': subject_and_number[0] + '_' + base_number + suffix,
+					'long': subject_and_number[0] + ' ' + base_number + suffix
 				},
 				'relationships': [
 					doc['org']['id']		// department code (eg: HA)
