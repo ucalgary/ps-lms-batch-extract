@@ -52,12 +52,26 @@ class PS2Couch(LMSObject):
 		print doc['sourcedid']['id']
 		membership_sourcedid = doc['sourcedid']
 		membership_id = membership_sourcedid['id']
+
+		# Get the set of membership document IDs currently in the data for this membership source.
+		# The difference between this set and the set of members that are about to be parsed in
+		# will have their role status set to 0, to indicate they are unenrolled.
+		existing_members = set([row.id for row in target_db.view('_all_docs', startkey=membership_id + '-', endkey=membership_id + '-{}')])
+		processed_members= set()
+
 		members = (doc['member'],) if isinstance(doc['member'], dict) else doc['member']
 		for member in members:
 			member['_id'] = membership_id + '-' + member['sourcedid']['id']
 			member['membership_sourcedid'] = membership_sourcedid
 			member['type'] = self.args.type
 			target_db.update_doc('lms/from_ps', docid=member['_id'], body=member)
+			processed_members.add(member['_id'])
+
+		# For IDs that were not observed, marked them all as unenrolled
+		# by setting their role status to 0
+		unobserved_members = existing_members - processed_members
+		for member_id in unobserved_members:
+			target_db.update_doc('lms/member_status', docid=member_id, body=0)
 
 	def _is_sequence(self, arg):
 		return (not hasattr(arg, "strip") and
