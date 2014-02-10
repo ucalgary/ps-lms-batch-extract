@@ -19,7 +19,7 @@ exports.from_ps = function(doc, req) {
 
 	if (!lmsutils.ps_docs_equal(doc, req_doc)) {
 		req_doc['_rev'] = doc['_rev'];
-		if ('mapping' in doc) {
+		if ('mapping' in doc && !('mapping' in req_doc)) {
 			req_doc['mapping'] = doc['mapping'];
 		}
 
