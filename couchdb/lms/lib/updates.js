@@ -1,12 +1,20 @@
-exports.from_ps = function(doc, req) {	
+exports.from_ps = function(doc, req) {
+	var req_doc = JSON.parse(req.body);
+
+	// If the request document does not have a datetime specified,
+	// insert one based on the server's clock.
+	if (!('datetime' in req_doc)) {
+		req_doc['datetime'] = new Date().toISOString();
+	}
+
 	// If there is not an existing doc, create one.
 	if (!doc) {
-		return [JSON.parse(req.body), 'Created.'];
+		return [req_doc, 'Created.'];
 	}
 
 	// If there is an existing doc, update it if the
 	// POST body is different than what's in the database
-	var req_doc = JSON.parse(req.body);
+	
 	var lmsutils = require('views/lib/lmsutils');
 
 	if (!lmsutils.ps_docs_equal(doc, req_doc)) {
