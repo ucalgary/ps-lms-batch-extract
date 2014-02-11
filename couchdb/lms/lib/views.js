@@ -122,8 +122,12 @@ exports.d2l_user = {
 				},
 				'email': doc['email']
 			}
+			var key = [
+				doc['userid'],
+				Math.floor(new Date(doc['datetime']) / 1000)
+			];
 
-			emit(doc._local_seq, translated_doc);
+			emit(key, translated_doc);
 		}
 	}
 }
