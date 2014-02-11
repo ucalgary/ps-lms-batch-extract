@@ -23,7 +23,10 @@ class PS2Couch(LMSObject):
 		return parser
 
 	def main(self):
-		process_f = self.process_membership_doc if self.args.element == 'membership' else self.process_doc
+		process_f = {
+			'membership': self.process_membership_doc,
+			'person': self.process_person_doc
+		}.get(self.args.element, self.process_doc)
 		target_db = self.couchdb_client(self.args.db)
 		context = etree.iterparse(self.args.file, events=('end',), tag=(self.args.element, 'properties'))
 		datasource = None
@@ -92,6 +95,20 @@ class PS2Couch(LMSObject):
 		unobserved_members = existing_members - processed_members
 		for member_id in unobserved_members:
 			target_db.update_doc('lms/member_status', docid=member_id, body=0)
+
+	def process_person_doc(self, doc, target_db):
+		# Person docs have a custom ID that includes the source because the same IDs can exist from
+		# both PeopleSoft and Destiny One
+		base_id = doc.get('sourcedid', {}).get('id')
+		if not base_id:
+			return
+		source_system = {
+			'PeopleSoft': 'PS',
+			'Destiny One': 'D1'
+		}.get(doc.get('datasource', 'Unknown'), 'UK')
+		doc['_id'] = base_id + '-' + source_system
+		doc['type'] = self.args.type
+		target_db.update_doc('lms/from_ps', docid=doc['_id'], body=doc)
 
 	def _is_sequence(self, arg):
 		return (not hasattr(arg, "strip") and
