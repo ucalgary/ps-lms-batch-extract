@@ -4,6 +4,8 @@
 import json
 import sys
 from lxml import etree
+from datetime import datetime as dt
+from pytz import timezone
 
 from pslms.base import LMSObject
 
@@ -23,11 +25,29 @@ class PS2Couch(LMSObject):
 	def main(self):
 		process_f = self.process_membership_doc if self.args.element == 'membership' else self.process_doc
 		target_db = self.couchdb_client(self.args.db)
-		context = etree.iterparse(self.args.file, events=('end',), tag=self.args.element)
+		context = etree.iterparse(self.args.file, events=('end',), tag=(self.args.element, 'properties'))
+		datasource = None
+		datetime = None
 
 		for event, elem in context:
-			doc = self.etree_to_dict(elem)
-			process_f(doc, target_db)
+			if elem.tag == 'properties':
+				properties = self.etree_to_dict(elem)
+				datasource = properties['datasource']
+				datetime = properties['datetime']
+
+				try:
+					datetime_ = dt.strptime(datetime, '%Y-%m-%d %H:%M:%S')
+					datetime_ = timezone('Canada/Mountain').localize(datetime_)
+					datetime = datetime_.isoformat()
+				except:
+					raise
+			elif elem.tag == self.args.element:
+				doc = self.etree_to_dict(elem)
+				if not 'datasource' in doc:
+					doc['datasource'] = datasource
+				if not 'datetime' in doc:
+					doc['datetime'] = datetime
+				process_f(doc, target_db)
 
 	def doc_with_extracted_id(self, doc):
 		doc_id = doc.get('sourcedid', {}).get('id')
@@ -85,6 +105,9 @@ def main(args=None):
 		connection_info = {
 			'lms_data': {
 				'url': 'http://127.0.0.1:5984/lms-data'
+			},
+			'lms_data2': {
+				'url': 'http://127.0.0.1:5984/lms-data2'
 			}
 		}
 	).run()
