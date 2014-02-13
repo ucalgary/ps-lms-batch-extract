@@ -120,7 +120,10 @@ exports.d2l_user = {
 					'given': doc['name']['n']['given'],
 					'family': doc['name']['n']['family']
 				},
-				'email': doc['email']
+				'email': doc['email'],
+				'datasource': doc['datasource'],
+				'datetime': doc['datetime'],
+				'attribute_revisions': doc['attribute_revisions']
 			}
 			var key = [
 				doc['userid'],
@@ -128,7 +131,66 @@ exports.d2l_user = {
 			];
 
 			emit(key, translated_doc);
+		} else if (doc['type'] == 'member') {
+			if (doc['datasource'] == 'PeopleSoft' && doc['role']['@roletype'] == '02') {
+				var key = [
+					doc['sourcedid']['id'],
+					'ps_instructor'
+				];
+
+				emit(key, true)
+			}
 		}
+	},
+
+	reduce: function(key, values, rereduce) {
+		var reduction = rereduce ? values[0] : {
+			'ps': null,
+			'd1': null,
+			'is_ps_instructor': false
+		};
+
+		for (var i = rereduce ? 1 : 0; i < values.length; i++) {
+			var value = values[i];
+
+			if (typeof(value) == 'object') {
+				var src_map = {
+					'PeopleSoft': 'ps',
+					'Destiny One': 'd1'	
+				};
+				var src_key = src_map[value['datasource']] || null;
+
+				if (src_key == null) {
+					continue;
+				}
+
+				var existing_datetime = new Date(reduction['datetime'] || null);
+				var value_datetime = new Date(value['datetime'] || null);
+				
+				if (value_datetime >= existing_datetime) {
+					reduction[src_key] = value;
+				}
+			} else if (typeof(value) == 'boolean') {
+				reduction['is_ps_instructor'] |= value;
+			}
+		}
+
+		var canonical = reduction['ps'] || reduction['d1'];
+		if (reduction['ps'] && reduction['d1'] && !reduction['is_ps_instructor']) {
+			var interesting_keys = ['name', 'email'];
+			for (var i = 0; i < interesting_keys.length; i++) {
+				var key = interesting_keys[i];
+				var ps_datetime = new Date(reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime']);
+				var d1_datetime = new Date(reduction['d1']['attribute_revisions'][key] || reduction['d1']['datetime']);
+
+				if (d1_datetime > ps_datetime) {
+					canonical[key] = reduction['d1'][key];
+				}
+			}
+		}
+		reduction['canonical'] = canonical;
+
+		return reduction;
 	}
 }
 
