@@ -94,7 +94,7 @@ exports.ps_docs_equal = function(o1, o2) {
 }
 
 exports.remove_non_ps_md = function(doc) {
-	if (!'_rev' in doc) {
+	if (!('_rev' in doc)) {
 		return doc;
 	}
 
