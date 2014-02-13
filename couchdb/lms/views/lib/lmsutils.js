@@ -87,8 +87,8 @@ exports.ps_docs_equal = function(o1, o2) {
 	o1 = exports.remove_non_ps_md(o1);
 	o2 = exports.remove_non_ps_md(o2);
 
-	log('o1: ' + JSON.stringify(o1));
-	log('o2: ' + JSON.stringify(o2));
+	// log('o1: ' + JSON.stringify(o1));
+	// log('o2: ' + JSON.stringify(o2));
 
 	return JSON.stringify(o1) === JSON.stringify(o2);
 }
