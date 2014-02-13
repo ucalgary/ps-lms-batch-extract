@@ -87,6 +87,8 @@ class PS2Couch(LMSObject):
 			member['_id'] = membership_id + '-' + member['sourcedid']['id']
 			member['membership_sourcedid'] = membership_sourcedid
 			member['type'] = self.args.type
+			member['datasource'] = doc['datasource']
+			member['datetime'] = doc['datetime']
 			target_db.update_doc('lms/from_ps', docid=member['_id'], body=member)
 			processed_members.add(member['_id'])
 
