@@ -176,14 +176,14 @@ exports.d2l_user = {
 		}
 
 		var canonical = reduction['ps'] || reduction['d1'];
-		if (reduction['ps'] && reduction['d1'] && !reduction['is_ps_instructor']) {
+		if (reduction['ps'] && reduction['d1']) {
 			var interesting_keys = ['name', 'email'];
 			for (var i = 0; i < interesting_keys.length; i++) {
 				var key = interesting_keys[i];
 				var ps_datetime = new Date(reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime']);
 				var d1_datetime = new Date(reduction['d1']['attribute_revisions'][key] || reduction['d1']['datetime']);
 
-				if (d1_datetime > ps_datetime) {
+				if (!(key == 'email' && reduction['is_ps_instructor']) && (d1_datetime > ps_datetime)) {
 					canonical[key] = reduction['d1'][key];
 				}
 			}
