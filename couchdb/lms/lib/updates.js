@@ -23,6 +23,27 @@ exports.from_ps = function(doc, req) {
 			req_doc['mapping'] = doc['mapping'];
 		}
 
+		// For person document, track the datetime certain attributes
+		// were changed. This is to enable custom business rules when
+		// combining data from PeopleSoft and Destiny One
+		if (req_doc['type'] == 'person') {
+			var datetime = req_doc['datetime'];
+			var interesting_keys = ['name', 'email'];
+			var attribute_revisions = 'attribute_revisions' in doc ? doc['attribute_revisions'] : {}
+
+			for (var i = 0; i < interesting_keys.length; i++) {
+				var key = interesting_keys[i];
+				var existing_value = doc[key];
+				var request_value = req_doc[key];
+
+				if (!lmsutils.ps_docs_equal(existing_value, request_value)) {
+					attribute_revisions[key] = datetime;
+				}
+			}
+
+			req_doc['attribute_revisions'] = attribute_revisions;
+		}
+
 		return [req_doc, 'Updated.'];
 	} else {
 		return [null, 'No changes.'];
