@@ -1,3 +1,20 @@
+// determines what to do with course ID
+exports.get_course_code = function(raw_id, ps_suffix) {
+    var course_id = '';
+    
+    // Check for ContEd course code first
+    if(/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]/.test(raw_id)){
+	// no conversion necessary from D1
+	course_id = raw_id;
+    }
+    else{
+	// PeopleSoft format -- convert to Blackboard format
+	course_id = lmsutils.ps_to_bb_course_code(raw_id) + ps_suffix;
+    }
+
+    return course_id;
+}
+
 // exports.ps_to_bb_course_code = function(ps_code) {
 // 	// PS: 2137-UCALG_ENGL_201_LEC16-75668
 // 	// BB: W2013ENGL201LEC116
