@@ -28,29 +28,35 @@ class PS2Couch(LMSObject):
 			'person': self.process_person_doc
 		}.get(self.args.element, self.process_doc)
 		target_db = self.couchdb_client(self.args.db)
-		context = etree.iterparse(self.args.file, events=('end',), tag=(self.args.element, 'properties'))
 		datasource = None
 		datetime = None
 
+		# Start with scanning specifically for the properties element once.
+		# The properties element appears at the top of the file for PeopleSoft data,
+		# but at the end of the file for Destiny One data.
+		context = etree.iterparse(self.args.file, events=('end',), tag='properties')
 		for event, elem in context:
-			if elem.tag == 'properties':
-				properties = self.etree_to_dict(elem)
-				datasource = properties['datasource']
-				datetime = properties['datetime']
+			assert elem.tag == 'properties'
+			properties = self.etree_to_dict(elem)
+			datasource = properties['datasource']
+			datetime = properties['datetime']
+			try:
+				datetime_ = dt.strptime(datetime, '%Y-%m-%d %H:%M:%S')
+				datetime_ = timezone('Canada/Mountain').localize(datetime_)
+				datetime = datetime_.isoformat()
+			except:
+				raise
 
-				try:
-					datetime_ = dt.strptime(datetime, '%Y-%m-%d %H:%M:%S')
-					datetime_ = timezone('Canada/Mountain').localize(datetime_)
-					datetime = datetime_.isoformat()
-				except:
-					raise
-			elif elem.tag == self.args.element:
-				doc = self.etree_to_dict(elem)
-				if not 'datasource' in doc:
-					doc['datasource'] = datasource
-				if not 'datetime' in doc:
-					doc['datetime'] = datetime
-				process_f(doc, target_db)
+		# Then, scan for and parse the user specified elements
+		context = etree.iterparse(self.args.file, events=('end',), tag=self.args.element)
+		for event, elem in context:
+			assert elem.tag == self.args.element
+			doc = self.etree_to_dict(elem)
+			if not 'datasource' in doc:
+				doc['datasource'] = datasource
+			if not 'datetime' in doc:
+				doc['datetime'] = datetime
+			process_f(doc, target_db)
 
 	def doc_with_extracted_id(self, doc):
 		doc_id = doc.get('sourcedid', {}).get('id')
