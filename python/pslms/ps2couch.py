@@ -90,6 +90,9 @@ class PS2Couch(LMSObject):
 
 		members = (doc['member'],) if isinstance(doc['member'], dict) else doc['member']
 		for member in members:
+			if member['sourcedid']['id'] == None:
+				print 'Empty id encountered'
+				continue
 			member['_id'] = membership_id + '-' + member['sourcedid']['id']
 			member['membership_sourcedid'] = membership_sourcedid
 			member['type'] = self.args.type
