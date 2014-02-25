@@ -81,6 +81,7 @@ class PS2Couch(LMSObject):
 		print doc['sourcedid']['id']
 		membership_sourcedid = doc['sourcedid']
 		membership_id = membership_sourcedid['id']
+		datasource = doc['datasource']
 
 		# Get the set of membership document IDs currently in the data for this membership source.
 		# The difference between this set and the set of members that are about to be parsed in
@@ -103,9 +104,10 @@ class PS2Couch(LMSObject):
 
 		# For IDs that were not observed, marked them all as unenrolled
 		# by setting their role status to 0
-		unobserved_members = existing_members - processed_members
-		for member_id in unobserved_members:
-			target_db.update_doc('lms/member_status', docid=member_id, body=0)
+		if datasource == 'PeopleSoft':
+			unobserved_members = existing_members - processed_members
+			for member_id in unobserved_members:
+				target_db.update_doc('lms/member_status', docid=member_id, body=0)
 
 	def process_person_doc(self, doc, target_db):
 		# Person docs have a custom ID that includes the source because the same IDs can exist from
