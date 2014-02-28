@@ -70,7 +70,8 @@ exports.d2l_template = {
 // 2 Offerings and 3 Sections
 exports.d2l_offering = {
 	map: function(doc) {
-		if (doc['type'] == 'course' && doc['grouptype']['typevalue']['@level'] == '0') {
+		if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0'
+		    && (doc['grouptype']['1']['scheme'] == 'E' || doc['lmsexport']['include'] == '1')) {
 			var lmsutils = require('views/lib/lmsutils');
 			var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
 
@@ -176,7 +177,7 @@ exports.d2l_list_mappings = {
 
 exports.ares_course = {
 	map: function(doc) {
-		if (doc['type'] == 'course' && doc['grouptype']['typevalue']['@level'] == '0') {
+		if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0') {
 			var lmsutils = require('views/lib/lmsutils');
 			var translated_doc = {
 				'course_code_ps': doc['sourcedid']['id'],
