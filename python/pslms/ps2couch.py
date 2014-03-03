@@ -139,8 +139,17 @@ def main(args=None):
 			'lms_data': {
 				'url': 'http://127.0.0.1:5984/lms-data'
 			},
-			'lms_data2': {
-				'url': 'http://127.0.0.1:5984/lms-data2'
+			'2141': {
+				'url': 'http://127.0.0.1:5984/lms-data-2141'
+			},
+			'2143': {
+				'url': 'http://127.0.0.1:5984/lms-data-2143'
+			},
+			'2145': {
+				'url': 'http://127.0.0.1:5984/lms-data-2145'
+			},
+			'2147': {
+				'url': 'http://127.0.0.1:5984/lms-data-2147'
 			}
 		}
 	).run()
