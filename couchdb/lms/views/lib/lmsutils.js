@@ -39,6 +39,16 @@ exports.ps_to_bb_course_components = function(ps_code) {
 															'ALL':'ALL' }[course_section_parts[1]];
 	var course_section_number = course_section_parts[2].replace(/\D/g, '');
 
+
+	if(/B/.test(course_number)){ 
+	    // dump "B" sections
+	    return null; 
+	}
+	else { 
+	    // convert "B" sections into "AB"
+	    course_number = course_number.replace(/A/g, "AB"); 
+	}
+
 	return [course_session,					// 0: single character semester (P, S, F, W)
 	        course_year,						// 1: four digit year (2014)
 	        ps_code_parts[2],				// 2: subject code (ENGL)
