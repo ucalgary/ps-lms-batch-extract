@@ -45,7 +45,7 @@ exports.ps_to_bb_course_components = function(ps_code) {
 	    return null; 
 	}
 	else { 
-	    // convert "B" sections into "AB"
+	    // convert "A" sections into "AB"
 	    course_number = course_number.replace(/A/g, "AB"); 
 	}
 
