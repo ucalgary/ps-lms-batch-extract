@@ -105,9 +105,9 @@ exports.d2l_offering = {
 						  doc['relationship']['sourcedid'][0]['id']				// template (eg: ICT_680)
 						  ],
 				'section_relationships': [
-							  lmsutils.get_course_code(('mapping' in doc, '') ? 
+							  lmsutils.get_course_code(('mapping' in doc) ? 
 											doc['mapping']['sourcedid']['id'] :
-											doc['sourcedid']['id'])
+										        doc['sourcedid']['id'], '')
 							  ],
 				'is_mapped': ('mapping' in doc)
 			    } // end of translated_doc
