@@ -17,44 +17,41 @@ class BaseObject(object):
 		"""The main runloop. Scripts should call this method
 		after instantiating an object."""
 
-		try:
-			parser = self.argument_parser()
-			self.args = parser.parse_args(self._args)
-			self.unpack_arguments(self.args)
+		parser = self.argument_parser()
+		self.args = parser.parse_args(self._args)
+		self.unpack_arguments(self.args)
 
-			# Give subclasses an opportunity to perform additional setup functions
-			# before main is invoked.
-			self.prepare_for_main()
+		# Give subclasses an opportunity to perform additional setup functions
+		# before main is invoked.
+		self.prepare_for_main()
 
-			if not self.args.background:
-				result = self.main()
-			else:
-				import daemon
-				import grp
-				import pwd
-				import signal
-				from lockfile.pidlockfile import PIDLockFile
-				
-				# Create and configure the daemon context
-				ctx = daemon.DaemonContext()
-				ctx.umask = 0o027
-				ctx.pidfile = PIDLockFile(self.args.pidfile)
-				# ctx.signal_map = {
-				# 	signal.SIGTERM: # program_cleanup,
-				# 	signal.SIGUP: 'terminate',
-				# 	signal.SIGUSR1: # reload_program_config
-				# }
-				ctx.uid = pwd.getpwnam('nobody').pw_uid
-				ctx.gid = grp.getgrnam('nobody').gr_gid
-				
-				# Daemonize by running within the daemon context
-				with ctx:
-					result = self.main()
-		except BaseException as e:
-			self.present_error(e)
+		if not self.args.background:
+			result = self.main()
 		else:
-			# Exit with the code returned from main.
-			sys.exit(result)
+			import daemon
+			import grp
+			import pwd
+			import signal
+			from lockfile.pidlockfile import PIDLockFile
+			
+			# Create and configure the daemon context
+			ctx = daemon.DaemonContext()
+			ctx.umask = 0o027
+			ctx.pidfile = PIDLockFile(self.args.pidfile)
+			# ctx.signal_map = {
+			# 	signal.SIGTERM: # program_cleanup,
+			# 	signal.SIGUP: 'terminate',
+			# 	signal.SIGUSR1: # reload_program_config
+			# }
+			ctx.uid = pwd.getpwnam('nobody').pw_uid
+			ctx.gid = grp.getgrnam('nobody').gr_gid
+			
+			# Daemonize by running within the daemon context
+			with ctx:
+				result = self.main()
+
+		# Exit with the code returned from main.
+		sys.exit(result)
 
 	# Configuring the observer
 			
