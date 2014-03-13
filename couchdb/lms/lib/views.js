@@ -241,31 +241,38 @@ exports.d2l_list_nonenrollment_exclusion = {
 // generate course copy batch (CCB) file
 exports.d2l_make_ccb = {
     map: function(doc) {
-	if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0'
-	    && (doc['grouptype']['1']['scheme'] == 'E' || doc['lmsexport']['include'] == '1')) {
+	//if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0'
+	//&& (doc['grouptype']['1']['scheme'] == 'E' || doc['lmsexport']['include'] == '1')) {
+
+	if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0') {
 	    var lmsutils = require('views/lib/lmsutils');
+	    var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
 
-	    var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
-	    var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
-	    var suffix = '';
-	    
-	    // keep Qatar templates separate so that they are organized in their
-	    // own faculty/department
-	    if (doc['org']['id'] == 'QA') {
-		suffix = 'Q';
-	    }
-
-	    var translated_doc = {
-		'dest_dept' : doc['org']['id'],
-		'dest_name' : doc['description']['short'].replace(/,/g, ""),
-		'dest_id' : lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
-		'dest_template' : subject_and_number[0] + '_' + base_number + suffix
-	    }
-
-	    emit(doc['sourcedid']['id'], translated_doc);
-	}	
-    }	
-}
+	    // only output Lectures, Seminars, and exceptions
+	    if(bb_course_components[4] == 'L' || bb_course_components[4] == 'S' || doc['lmsexport']['include'] == '1'){
+		
+		var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
+		var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
+		var suffix = '';
+		
+		// keep Qatar templates separate so that they are organized in their
+		// own faculty/department
+		if (doc['org']['id'] == 'QA') {
+		    suffix = 'Q';
+		}
+		
+		var translated_doc = {
+		    'dest_dept' : doc['org']['id'],
+		    'dest_name' : doc['description']['short'].replace(/,/g, ""),
+		    'dest_id' : lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
+		    'dest_template' : subject_and_number[0] + '_' + base_number + suffix
+		}
+		
+		emit(doc['sourcedid']['id'], translated_doc);
+	    } // end of Lecture, Seminar, and exceptions
+	} // end of doc processing
+    } // end of map function
+} // end of function def
 
 // ------------------------------------------------------------
 // Views for Atlas Systems Ares
