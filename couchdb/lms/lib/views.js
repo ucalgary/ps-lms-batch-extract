@@ -185,46 +185,11 @@ exports.d2l_list_mappings = {
     }
 }
 
-// List non-enrollment components
-exports.d2l_list_nonenrollments = {
-    map: function(doc) {
-	if (doc['grouptype']['1']['scheme'] == 'N'){
-	    var lmsutils = require('views/lib/lmsutils');
-
-	    var translated_doc = {
-		'bb_code' : lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
-		'ps_code' : doc['sourcedid']['id']
-	    }
-
-	    emit(doc['sourcedid']['id'], translated_doc);
-	} // end of document match
-    }
-}
-
 
 // List non-enrollment components that are added to D2L
-exports.d2l_list_nonenrollment_inclusions = {
+exports.d2l_list_lab_tutorial_inclusions = {
     map: function(doc) {
-	if ((doc['grouptype']['1']['scheme'] == 'N') &&
-	    (doc['lmsexport']['include'] == '1')){
-	    var lmsutils = require('views/lib/lmsutils');
-
-	    var translated_doc = {
-		'bb_code' : lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
-		'ps_code' : doc['sourcedid']['id']
-	    }
-
-	    emit(doc['sourcedid']['id'], translated_doc);
-	} // end of document match
-    }
-}
-
-
-// List non-enrollment components that are excluded from D2L
-exports.d2l_list_nonenrollment_exclusion = {
-    map: function(doc) {
-	if ((doc['grouptype']['1']['scheme'] == 'N') &&
-	    (!doc['lmsexport'])){
+	if (doc['type'] == 'course' && doc['lmsexport']['include'] == '1'){
 	    var lmsutils = require('views/lib/lmsutils');
 
 	    var translated_doc = {
