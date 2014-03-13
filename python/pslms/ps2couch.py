@@ -112,7 +112,10 @@ class PS2Couch(LMSObject):
 	def process_person_doc(self, doc, target_db):
 		# Person docs have a custom ID that includes the source because the same IDs can exist from
 		# both PeopleSoft and Destiny One
-		base_id = doc.get('sourcedid', {}).get('id')
+		sourcedid = doc.get('sourcedid', {})
+		if not sourcedid:
+			return
+		base_id = sourcedid.get('id')
 		if not base_id:
 			return
 		source_system = {
