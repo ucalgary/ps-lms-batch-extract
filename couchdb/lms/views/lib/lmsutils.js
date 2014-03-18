@@ -110,7 +110,7 @@ exports.remove_non_ps_md = function(doc) {
 
 	var mod_doc = {};
 	for (var key in doc) {
-		if (key.charAt(0) != '_' && key != 'mapping') {
+		if (key.charAt(0) != '_' && key != 'mapping' && key != 'lmsexport') {
 			mod_doc[key] = doc[key];
 		}
 	}

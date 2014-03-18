@@ -15,6 +15,10 @@ exports.from_ps = function(doc, req) {
 			req_doc['mapping'] = doc['mapping'];
 		}
 
+		if ('lmsexport' in doc) {
+			req_doc['lmsexport'] = doc['lmsexport'];
+		}
+
 		return [req_doc, 'Updated.'];
 	} else {
 		return [null, 'No changes.'];
