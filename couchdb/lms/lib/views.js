@@ -208,7 +208,7 @@ exports.d2l_user = {
 					continue;
 				}
 
-				var existing_datetime = lmsutils.DateFromISOString(reduction['datetime']) || 0;
+				var existing_datetime = lmsutils.DateFromISOString(reduction[src_key]['datetime']) || 0;
 				var value_datetime = lmsutils.DateFromISOString(value['datetime']) || 0;
 				
 				if (value_datetime >= existing_datetime) {
