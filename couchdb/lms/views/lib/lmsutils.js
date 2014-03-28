@@ -9,7 +9,7 @@ exports.get_course_code = function(raw_id, ps_suffix) {
     }
     else{
 	// PeopleSoft format -- convert to Blackboard format
-	course_id = lmsutils.ps_to_bb_course_code(raw_id) + ps_suffix;
+	course_id = exports.ps_to_bb_course_code(raw_id) + ps_suffix;
     }
 
     return course_id;
