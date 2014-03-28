@@ -4,7 +4,8 @@ exports.from_ps = function(doc, req) {
 	// If the request document does not have a datetime specified,
 	// insert one based on the server's clock.
 	if (!('datetime' in req_doc)) {
-		req_doc['datetime'] = new Date().toISOString();
+		var lmsutils = require('views/lib/lmsutils');
+		req_doc['datetime'] = lmsutils.DateToISOString(new Date());
 	}
 
 	// If there is not an existing doc, create one.
