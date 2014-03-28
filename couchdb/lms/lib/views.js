@@ -156,6 +156,7 @@ exports.d2l_offering = {
 exports.d2l_user = {
 	map: function(doc) {
 		if (doc['type'] == 'person') {
+			var lmsutils = require('views/lib/lmsutils');
 			var translated_doc = {
 				'id': doc['userid'],
 				'name': {
@@ -169,7 +170,7 @@ exports.d2l_user = {
 			}
 			var key = [
 				doc['userid'],
-				Math.floor(new Date(doc['datetime']) / 1000)
+				Math.floor(lmsutils.DateFromISOString(doc['datetime'])/ 1000)
 			];
 
 			emit(key, translated_doc);
@@ -186,6 +187,7 @@ exports.d2l_user = {
 	},
 
 	reduce: function(key, values, rereduce) {
+		var lmsutils = require('views/lib/lmsutils');
 		var reduction = rereduce ? values[0] : {
 			'ps': null,
 			'd1': null,
@@ -206,8 +208,8 @@ exports.d2l_user = {
 					continue;
 				}
 
-				var existing_datetime = new Date(reduction['datetime'] || null);
-				var value_datetime = new Date(value['datetime'] || null);
+				var existing_datetime = lmsutils.DateFromISOString(reduction['datetime']) || 0;
+				var value_datetime = lmsutils.DateFromISOString(value['datetime']) || 0;
 				
 				if (value_datetime >= existing_datetime) {
 					reduction[src_key] = value;
@@ -222,8 +224,8 @@ exports.d2l_user = {
 			var interesting_keys = ['name', 'email'];
 			for (var i = 0; i < interesting_keys.length; i++) {
 				var key = interesting_keys[i];
-				var ps_datetime = new Date(reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime']);
-				var d1_datetime = new Date(reduction['d1']['attribute_revisions'][key] || reduction['d1']['datetime']);
+				var ps_datetime = lmsutils.DateFromISOString(reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime']);
+				var d1_datetime = lmsutils.DateFromISOString(reduction['d1']['attribute_revisions'][key] || reduction['d1']['datetime']);
 				
 				if (!(key == 'email' && reduction['is_ps_instructor']) && (d1_datetime > ps_datetime)) {
 					canonical[key] = reduction['d1'][key];
