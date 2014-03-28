@@ -187,7 +187,49 @@ exports.d2l_user = {
 	},
 
 	reduce: function(key, values, rereduce) {
-		var lmsutils = require('views/lib/lmsutils');
+		var DateFromISOString = function(s) {
+			var day, tz,
+			rx =/^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):(\d\d))?$/,
+			p = rx.exec(s) || [];
+
+			if (p[1]){
+				day=  p[1].split(/\D/);
+				for (var i = 0, L = day.length; i < L; i++) {
+					day[i]= parseInt(day[i], 10) || 0;
+				}
+				day[1] -= 1;
+				day = new Date(Date.UTC.apply(Date, day));
+				if (!day.getDate()) return NaN;
+				if (p[5]){
+					tz = (parseInt(p[5], 10) * 60);
+					if (p[6]) tz+= parseInt(p[6], 10);
+					if (p[4] == '+') tz *= -1;
+					if (tz) day.setUTCMinutes(day.getUTCMinutes() + tz);
+				}
+				return day;
+			}
+			return NaN;
+		};
+
+		var DateToISOString = function(d) {
+			function pad(number) {
+				if (number < 10) {
+					return '0' + number;
+				}
+
+				return number;
+			}
+
+			return d.getUTCFullYear() +
+				'-' + pad(d.getUTCMonth() + 1) +
+				'-' + pad(d.getUTCDate()) + 
+				'T' + pad(d.getUTCHours()) +
+				':' + pad(d.getUTCMinutes()) +
+				':' + pad(d.getUTCSeconds()) +
+				'.' + (d.getUTCMilliseconds() / 1000).toFixed(3).slice(2,5) +
+				'Z';
+		}
+
 		var reduction = rereduce ? values[0] : {
 			'ps': null,
 			'd1': null,
@@ -208,10 +250,12 @@ exports.d2l_user = {
 					continue;
 				}
 
-				var existing_datetime = lmsutils.DateFromISOString(reduction[src_key]['datetime']) || 0;
-				var value_datetime = lmsutils.DateFromISOString(value['datetime']) || 0;
+				if (reduction[src_key] != null) {
+					var existing_datetime = DateFromISOString(reduction[src_key]['datetime']) || 0;
+					var value_datetime = DateFromISOString(value['datetime']) || 0;	
+				}
 				
-				if (value_datetime >= existing_datetime) {
+				if (reduction[src_key] == null || (value_datetime >= existing_datetime)) {
 					reduction[src_key] = value;
 				}
 			} else if (typeof(value) == 'boolean') {
@@ -224,8 +268,8 @@ exports.d2l_user = {
 			var interesting_keys = ['name', 'email'];
 			for (var i = 0; i < interesting_keys.length; i++) {
 				var key = interesting_keys[i];
-				var ps_datetime = lmsutils.DateFromISOString(reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime']);
-				var d1_datetime = lmsutils.DateFromISOString(reduction['d1']['attribute_revisions'][key] || reduction['d1']['datetime']);
+				var ps_datetime = DateFromISOString(reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime']);
+				var d1_datetime = DateFromISOString(reduction['d1']['attribute_revisions'][key] || reduction['d1']['datetime']);
 				
 				if (!(key == 'email' && reduction['is_ps_instructor']) && (d1_datetime > ps_datetime)) {
 					canonical[key] = reduction['d1'][key];
