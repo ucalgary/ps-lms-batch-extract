@@ -312,15 +312,15 @@ exports.d2l_list_mappings = {
     map: function(doc) {
 	if (doc['mapping']){
 	    var lmsutils = require('views/lib/lmsutils');
-	    var bb_code = lmsutils.get_course_code(doc['mapping']['sourcedid']['id']);
+	    var bb_code = lmsutils.get_course_code(doc['mapping']['sourcedid']['id'], '');
 	    
 	    var translated_doc = {
 		'source' : {
-		    'bb_code' : lmsutils.get_course_code(doc['sourcedid']['id']),
+		    'bb_code' : lmsutils.get_course_code(doc['sourcedid']['id'], ''),
 		    'ps_code' : doc['sourcedid']['id']
 		},
 		'destination' : {
-		    'bb_code' : lmsutils.get_course_code(doc['mapping']['sourcedid']['id']),
+		    'bb_code' : lmsutils.get_course_code(doc['mapping']['sourcedid']['id'], ''),
 		    'ps_code' : doc['mapping']['sourcedid']['id']
 		}
 	    }
