@@ -36,6 +36,7 @@ exports.ps_to_bb_course_components = function(ps_code) {
 															'TUT':'T',
 															'TUTT':'T',
 															'SEMS':'S',
+															'SEM':'S',
 															'ALL':'ALL' }[course_section_parts[1]];
 	var course_section_number = course_section_parts[2].replace(/\D/g, '');
 
