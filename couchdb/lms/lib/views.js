@@ -70,8 +70,6 @@ exports.d2l_template = {
 // 2 Offerings and 3 Sections
 exports.d2l_offering = {
 	map: function(doc) {
-	//if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0'
-		    //&& (doc['grouptype']['1']['scheme'] == 'E' || doc['lmsexport']['include'] == '1')) {
 	if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0') {
 
 			var lmsutils = require('views/lib/lmsutils');
@@ -92,14 +90,14 @@ exports.d2l_offering = {
 			    var semester_name = { 'P':'Spring', 'S':'Summer', 'F':'Fall', 'W':'Winter' }[bb_course_components[0]];
 			    var base_number = /(\d+).*/.exec(bb_course_components[3])[1];
 			    var short_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
-				             + bb_course_components[3] + ' '  // course number (201)
-				             + bb_course_components[4]        // single character section (L, B, T, S, C, P)
-				             + bb_course_components[5];       // section number (01)
+				+ bb_course_components[3] + ' '  // course number (201)
+				+ bb_course_components[4]        // single character section (L, B, T, S, C, P)
+				+ bb_course_components[5];       // section number (01)
 			    var long_prefix  = short_prefix
-				             + ' - ('
-			             	     + semester_name + ' '            // semester name (Spring, Summer, Fall, Winter)
-				             + bb_course_components[1]        // four digit year (2014)
-				             + ') - ';
+				+ ' - ('
+				+ semester_name + ' '            // semester name (Spring, Summer, Fall, Winter)
+				+ bb_course_components[1]        // four digit year (2014)
+				+ ') - ';
 			    var translated_doc = {
 				'id': bb_course_code,
 				'section_id': bb_course_code + '_SEC',
