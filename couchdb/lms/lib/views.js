@@ -76,7 +76,9 @@ exports.d2l_offering = {
 			var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
 
 			// only output Lectures, Seminars, and exceptions
-			if(bb_course_components[4] == 'L' || bb_course_components[4] == 'S' || doc['lmsexport']['include'] == '1'){
+			if((bb_course_components[5] == 'L' || bb_course_components[5] == 'S' || doc['lmsexport']['include'] == '1') &&
+			   // don't process "B" sections
+			   (bb_course_components[4] == 'A' || bb_course_components[4] == '')){
 			    
 			    var suffix = '';
 			    
@@ -90,9 +92,10 @@ exports.d2l_offering = {
 			    var semester_name = { 'P':'Spring', 'S':'Summer', 'F':'Fall', 'W':'Winter' }[bb_course_components[0]];
 			    var base_number = /(\d+).*/.exec(bb_course_components[3])[1];
 			    var short_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
-				+ bb_course_components[3] + ' '  // course number (201)
-				+ bb_course_components[4]        // single character section (L, B, T, S, C, P)
-				+ bb_course_components[5];       // section number (01)
+				+ bb_course_components[3]        // course number (201)
+				+ bb_course_components[4].replace(/A/g, "AB") + ' '  // AB course if applicable
+				+ bb_course_components[5]        // single character section (L, B, T, S, C, P)
+				+ bb_course_components[6];       // section number (01)
 			    var long_prefix  = short_prefix
 				+ ' - ('
 				+ semester_name + ' '            // semester name (Spring, Summer, Fall, Winter)
@@ -204,15 +207,14 @@ exports.d2l_list_lab_tutorial_inclusions = {
 // generate course copy batch (CCB) file
 exports.d2l_make_ccb = {
     map: function(doc) {
-	//if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0'
-	//&& (doc['grouptype']['1']['scheme'] == 'E' || doc['lmsexport']['include'] == '1')) {
-
 	if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0') {
 	    var lmsutils = require('views/lib/lmsutils');
 	    var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
 
 	    // only output Lectures, Seminars, and exceptions
-	    if(bb_course_components[4] == 'L' || bb_course_components[4] == 'S' || doc['lmsexport']['include'] == '1'){
+	    if((bb_course_components[5] == 'L' || bb_course_components[5] == 'S' || doc['lmsexport']['include'] == '1') &&
+	       // don't process "B" sections
+	       (bb_course_components[4] == 'A' || bb_course_components[4] == '')){
 		
 		var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
 		var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
