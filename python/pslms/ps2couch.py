@@ -4,6 +4,8 @@
 import json
 import sys
 from lxml import etree
+from datetime import datetime as dt
+from pytz import timezone
 
 from pslms.base import LMSObject
 
@@ -21,12 +23,39 @@ class PS2Couch(LMSObject):
 		return parser
 
 	def main(self):
-		process_f = self.process_membership_doc if self.args.element == 'membership' else self.process_doc
+		process_f = {
+			'membership': self.process_membership_doc,
+			'person': self.process_person_doc
+		}.get(self.args.element, self.process_doc)
 		target_db = self.couchdb_client(self.args.db)
-		context = etree.iterparse(self.args.file, events=('end',), tag=self.args.element)
+		datasource = None
+		datetime = None
 
+		# Start with scanning specifically for the properties element once.
+		# The properties element appears at the top of the file for PeopleSoft data,
+		# but at the end of the file for Destiny One data.
+		context = etree.iterparse(self.args.file, events=('end',), tag='properties')
 		for event, elem in context:
+			assert elem.tag == 'properties'
+			properties = self.etree_to_dict(elem)
+			datasource = properties['datasource']
+			datetime = properties['datetime']
+			try:
+				datetime_ = dt.strptime(datetime, '%Y-%m-%d %H:%M:%S')
+				datetime_ = timezone('Canada/Mountain').localize(datetime_)
+				datetime = datetime_.isoformat()
+			except:
+				raise
+
+		# Then, scan for and parse the user specified elements
+		context = etree.iterparse(self.args.file, events=('end',), tag=self.args.element)
+		for event, elem in context:
+			assert elem.tag == self.args.element
 			doc = self.etree_to_dict(elem)
+			if not 'datasource' in doc:
+				doc['datasource'] = datasource
+			if not 'datetime' in doc:
+				doc['datetime'] = datetime
 			process_f(doc, target_db)
 
 	def doc_with_extracted_id(self, doc):
@@ -52,6 +81,7 @@ class PS2Couch(LMSObject):
 		print doc['sourcedid']['id']
 		membership_sourcedid = doc['sourcedid']
 		membership_id = membership_sourcedid['id']
+		datasource = doc['datasource']
 
 		# Get the set of membership document IDs currently in the data for this membership source.
 		# The difference between this set and the set of members that are about to be parsed in
@@ -61,17 +91,40 @@ class PS2Couch(LMSObject):
 
 		members = (doc['member'],) if isinstance(doc['member'], dict) else doc['member']
 		for member in members:
+			if member['sourcedid']['id'] == None:
+				print 'Empty id encountered'
+				continue
 			member['_id'] = membership_id + '-' + member['sourcedid']['id']
 			member['membership_sourcedid'] = membership_sourcedid
 			member['type'] = self.args.type
+			member['datasource'] = doc['datasource']
+			member['datetime'] = doc['datetime']
 			target_db.update_doc('lms/from_ps', docid=member['_id'], body=member)
 			processed_members.add(member['_id'])
 
 		# For IDs that were not observed, marked them all as unenrolled
 		# by setting their role status to 0
-		unobserved_members = existing_members - processed_members
-		for member_id in unobserved_members:
-			target_db.update_doc('lms/member_status', docid=member_id, body=0)
+		if datasource == 'PeopleSoft':
+			unobserved_members = existing_members - processed_members
+			for member_id in unobserved_members:
+				target_db.update_doc('lms/member_status', docid=member_id, body=0)
+
+	def process_person_doc(self, doc, target_db):
+		# Person docs have a custom ID that includes the source because the same IDs can exist from
+		# both PeopleSoft and Destiny One
+		sourcedid = doc.get('sourcedid', {})
+		if not sourcedid:
+			return
+		base_id = sourcedid.get('id')
+		if not base_id:
+			return
+		source_system = {
+			'PeopleSoft': 'PS',
+			'Destiny One': 'D1'
+		}.get(doc.get('datasource', 'Unknown'), 'UK')
+		doc['_id'] = base_id + '-' + source_system
+		doc['type'] = self.args.type
+		target_db.update_doc('lms/from_ps', docid=doc['_id'], body=doc)
 
 	def _is_sequence(self, arg):
 		return (not hasattr(arg, "strip") and

@@ -40,7 +40,7 @@ class Couch2D2L(LMSObject):
 			'done_format': '4-Users_%(year)s-%(month)s-%(day)s.alldone',
 			'design_doc': 'lms',
 			'list': 'xml4_user',
-			'view': 'd2l_user'
+			'view': 'd2l_user?group=True&group_level=1'
 		},
 		'enrollments': {
 			'name_format': '5-Enrollments_%(year)s-%(month)s-%(day)s.xml',

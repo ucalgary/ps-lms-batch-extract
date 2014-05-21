@@ -1,3 +1,20 @@
+// determines what to do with course ID
+exports.get_course_code = function(raw_id, ps_suffix) {
+    var course_id = '';
+    
+    // Check for ContEd course code first
+    if(/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]/.test(raw_id)){
+	// no conversion necessary from D1
+	course_id = raw_id;
+    }
+    else{
+	// PeopleSoft format -- convert to Blackboard format
+	course_id = exports.ps_to_bb_course_code(raw_id) + ps_suffix;
+    }
+
+    return course_id;
+}
+
 // exports.ps_to_bb_course_code = function(ps_code) {
 // 	// PS: 2137-UCALG_ENGL_201_LEC16-75668
 // 	// BB: W2013ENGL201LEC116
@@ -93,22 +110,71 @@ exports.ps_docs_equal = function(o1, o2) {
 	o1 = exports.remove_non_ps_md(o1);
 	o2 = exports.remove_non_ps_md(o2);
 
-	log('o1: ' + JSON.stringify(o1));
-	log('o2: ' + JSON.stringify(o2));
+	// log('o1: ' + JSON.stringify(o1));
+	// log('o2: ' + JSON.stringify(o2));
 
 	return JSON.stringify(o1) === JSON.stringify(o2);
 }
 
 exports.remove_non_ps_md = function(doc) {
-	if (!'_rev' in doc) {
+	if (!(typeof(doc) == 'object')) {
+		return doc;
+	}
+
+	if (!('_rev' in doc)) {
 		return doc;
 	}
 
 	var mod_doc = {};
 	for (var key in doc) {
-		if (key.charAt(0) != '_' && key != 'mapping' && key != 'lmsexport') {
+		if (key.charAt(0) != '_' && key != 'mapping' && key != 'datetime' && key != 'attribute_revisions' && key != 'lmsexport') {
 			mod_doc[key] = doc[key];
 		}
 	}
 	return mod_doc;
+}
+
+// from http://stackoverflow.com/questions/6228302/javascript-date-iso8601
+exports.DateFromISOString = function(s) {
+	var day, tz,
+	rx =/^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):(\d\d))?$/,
+	p = rx.exec(s) || [];
+
+	if (p[1]){
+		day=  p[1].split(/\D/);
+		for (var i = 0, L = day.length; i < L; i++) {
+			day[i]= parseInt(day[i], 10) || 0;
+		}
+		day[1] -= 1;
+		day = new Date(Date.UTC.apply(Date, day));
+		if (!day.getDate()) return NaN;
+		if (p[5]){
+			tz = (parseInt(p[5], 10) * 60);
+			if (p[6]) tz+= parseInt(p[6], 10);
+			if (p[4] == '+') tz *= -1;
+			if (tz) day.setUTCMinutes(day.getUTCMinutes() + tz);
+		}
+		return day;
+	}
+	return NaN;
+}
+
+// based on polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+exports.DateToISOString = function(d) {
+	function pad(number) {
+		if (number < 10) {
+			return '0' + number;
+		}
+
+		return number;
+	}
+
+	return d.getUTCFullYear() +
+		'-' + pad(d.getUTCMonth() + 1) +
+		'-' + pad(d.getUTCDate()) + 
+		'T' + pad(d.getUTCHours()) +
+		':' + pad(d.getUTCMinutes()) +
+		':' + pad(d.getUTCSeconds()) +
+		'.' + (d.getUTCMilliseconds() / 1000).toFixed(3).slice(2,5) +
+		'Z';
 }
