@@ -26,6 +26,7 @@ exports.from_ps = function(doc, req) {
 
 		if ('lmsexport' in doc) {
 			req_doc['lmsexport'] = doc['lmsexport'];
+		}
 
 		// For person document, track the datetime certain attributes
 		// were changed. This is to enable custom business rules when

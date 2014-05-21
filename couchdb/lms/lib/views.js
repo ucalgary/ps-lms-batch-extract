@@ -165,10 +165,11 @@ exports.d2l_offering = {
 						'is_mapped': ('mapping' in doc)
 					} // end of translated_doc
 					emit(doc._local_seq, translated_doc);			
-				} // end of doc['grouptype']['typevalue']['@level'] == '0'
-			} // end of processing PS data
-		} // end of type == course
-	} // end of mapping function
+				} // end of filtering "B" courses
+			} // end of doc['grouptype']['typevalue']['@level'] == '0'
+		} // end of processing PS data
+	} // end of type == course
+    } // end of mapping function
 }
 
 
