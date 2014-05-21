@@ -71,6 +71,17 @@ exports.list_mappings = function(head, req) {
 	exports.text_document(head, req, 'list_mappings.txt');
 }
 
+// generate CCB file for all course offerings
+exports.list_ccb = function(head, req) {
+	exports.text_document(head, req, 'ccb.txt');
+}
+
+// generate CCB file for all course offerings
+exports.list_labs_and_tutorials = function(head, req) {
+	exports.text_document(head, req, 'labs_and_tutorials.txt');
+}
+
+
 exports.text_document = function(head, req, template) {
 	var row = null;
 

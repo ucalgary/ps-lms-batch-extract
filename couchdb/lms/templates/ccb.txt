@@ -1,0 +1,1 @@
+{doc.dest_dept},{doc.dest_id},{doc.dest_id},{doc.dest_template}

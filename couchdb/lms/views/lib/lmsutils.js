@@ -34,7 +34,11 @@ exports.ps_to_bb_course_code = function(ps_code) {
 	// PS: 2137-UCALG-ENGL-201-LEC16-75668
 	// BB: W2013ENGL201LEC116
 
-        return exports.ps_to_bb_course_components(ps_code).join('').replace(/\./g, "");
+    var bb_course_components = exports.ps_to_bb_course_components(ps_code);
+    bb_course_components[4] = bb_course_components[4].replace(/A/g, "AB");     // convert A courses into AB
+    
+    return bb_course_components.join('').replace(/\./g, "");
+
 }
 
 exports.ps_to_bb_course_components = function(ps_code) {
@@ -44,8 +48,8 @@ exports.ps_to_bb_course_components = function(ps_code) {
 
 	var course_year = ps_code_parts[0].substring(0, 1) + '0' + ps_code_parts[0].substring(1, 3);
 	var course_session = { 3:'P', 5:'S', 7:'F', 1:'W' }[ps_code_parts[0].charAt(3)];
-	//var course_number = ps_code_parts[3].replace(/\D/g, '');
-	var course_number = ps_code_parts[3];
+	var course_number = ps_code_parts[3].replace(/[AB]/g, "");
+	var course_AB = ps_code_parts[3].replace(/[0-9]/g, "");  // is this an A/B section or neither?
 	var course_section_type = { 'LEC':'L',
 															'LECL':'L',
 															'LAB':'B',
@@ -53,15 +57,17 @@ exports.ps_to_bb_course_components = function(ps_code) {
 															'TUT':'T',
 															'TUTT':'T',
 															'SEMS':'S',
+															'SEM':'S',
 															'ALL':'ALL' }[course_section_parts[1]];
 	var course_section_number = course_section_parts[2].replace(/\D/g, '');
-
+	
 	return [course_session,					// 0: single character semester (P, S, F, W)
-	        course_year,						// 1: four digit year (2014)
+	        course_year,					// 1: four digit year (2014)
 	        ps_code_parts[2],				// 2: subject code (ENGL)
 	        course_number,					// 3: course number (201)
-	        course_section_type,		// 4: single character section (L, B, T, S, C, P)
-	        course_section_number]	// 5: section number (01)
+		course_AB,                                      // 4: A/B section or neither
+	        course_section_type,                            // 5: single character section (L, B, T, S, C, P)
+	        course_section_number]                          // 6: section number (01)
 }
 
 exports.ps_to_ares_semester = function(ps_code) {
@@ -121,7 +127,7 @@ exports.remove_non_ps_md = function(doc) {
 
 	var mod_doc = {};
 	for (var key in doc) {
-		if (key.charAt(0) != '_' && key != 'mapping' && key != 'datetime' && key != 'attribute_revisions') {
+		if (key.charAt(0) != '_' && key != 'mapping' && key != 'datetime' && key != 'attribute_revisions' && key != 'lmsexport') {
 			mod_doc[key] = doc[key];
 		}
 	}

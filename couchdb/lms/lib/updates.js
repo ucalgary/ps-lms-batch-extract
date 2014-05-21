@@ -24,6 +24,9 @@ exports.from_ps = function(doc, req) {
 			req_doc['mapping'] = doc['mapping'];
 		}
 
+		if ('lmsexport' in doc) {
+			req_doc['lmsexport'] = doc['lmsexport'];
+
 		// For person document, track the datetime certain attributes
 		// were changed. This is to enable custom business rules when
 		// combining data from PeopleSoft and Destiny One
