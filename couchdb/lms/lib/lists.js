@@ -82,7 +82,7 @@ exports.list_labs_and_tutorials = function(head, req) {
 }
 
 // generate text file of instructor emails
-exports.ps_instructor_mlist = function(head, req) {
+exports.instructor_mlist = function(head, req) {
 	exports.text_document(head, req, 'instructor_list.txt');
 }
 
