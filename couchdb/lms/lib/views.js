@@ -364,6 +364,26 @@ exports.d2l_list_lab_tutorial_inclusions = {
 }
 
 
+// list courses that we allow to be sent to the holding tank
+exports.d2l_list_courses_to_holding_tank = {
+    map: function(doc) {
+	if (doc['type'] == 'course') {
+	    var lmsutils = require('views/lib/lmsutils');
+            var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
+	    
+	    // only output Lectures, Seminars, and exceptions
+	    if((bb_course_components[5] == 'L' || bb_course_components[5] == 'S' || doc['lmsexport']['include'] == '1') && 
+	       // don't process "B" sections
+               (bb_course_components[4] == 'A' || bb_course_components[4] == '')){
+		
+		// output (unprocessed) course ID and component type
+		emit(doc['sourcedid']['id'],[doc['sourcedid']['id'], bb_course_components[5]]);
+	    } // end of Lectures/Seminars/Exceptions
+	} // end of doc processing
+    } // end of map function
+} // end of function def
+
+
 // generate course copy batch (CCB) file
 exports.d2l_make_ccb = {
     map: function(doc) {
@@ -398,6 +418,61 @@ exports.d2l_make_ccb = {
 	} // end of doc processing
     } // end of map function
 } // end of function def
+
+
+// mailing list of PeopleSoft instructors
+exports.d2l_ps_instructor_mlist = {
+    map: function(doc) {
+	var lmsutils = require('views/lib/lmsutils');
+	
+	if (doc['type'] == 'member' && doc['role']['status'] == "1" && doc['role']['@roletype'] == "02") {
+	    var translated_doc = {
+		'id': doc['sourcedid']['id'],
+		'email': doc['role']['email'],
+		'courseid': lmsutils.get_course_code(doc['membership_sourcedid']['id'], ''),
+		'datasource': doc['datasource']
+	    }
+	    emit(doc['membership_sourcedid']['id'], translated_doc);
+	} // end of instructor filtering
+	else if (doc['type'] == 'course') {
+	    var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
+	    
+	    // only output Lectures, Seminars, and exceptions
+	    if((bb_course_components[5] == 'L' || bb_course_components[5] == 'S' || doc['lmsexport']['include'] == '1') && 
+	       // don't process "B" sections
+	       (bb_course_components[4] == 'A' || bb_course_components[4] == '')){
+		
+		//emit(doc['sourcedid']['id'],[doc['sourcedid']['id'], bb_course_components[5]]);
+		emit(doc['sourcedid']['id'], true);
+	    } // end of Lectures/Seminars/Exceptions
+	} // end of doc processing
+    }, // end of map function
+
+    reduce: function(key, values, rereduce) {
+	var reduction = rereduce ? values[0] : {
+	    'instructor': null,
+	    'is_in_ht': false
+	};
+
+	for (var i = rereduce ? 1 : 0; i < values.length; i++) {
+	    var value = values[i];
+	    
+	    if (typeof(value) == 'object') {
+		reduction['instructor'] = value;
+	    } else if (typeof(value) == 'boolean') {
+		reduction['is_in_ht'] = value;
+	    }
+	}
+
+	// only return instructor info for courses that are in the holding tank
+	if(reduction['instructor'] != null && reduction['is_in_ht'] == true){
+	    return reduction;
+	}
+    } // end of reduce function
+
+} // end of function def
+    
+
 
 // ------------------------------------------------------------
 // Views for Atlas Systems Ares
