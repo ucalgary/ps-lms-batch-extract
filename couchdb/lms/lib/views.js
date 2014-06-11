@@ -450,7 +450,7 @@ exports.d2l_ps_instructor_mlist = {
 
     reduce: function(key, values, rereduce) {
 	var reduction = rereduce ? values[0] : {
-	    'instructor': null,
+	    'user': null,
 	    'is_in_ht': false
 	};
 
@@ -458,18 +458,78 @@ exports.d2l_ps_instructor_mlist = {
 	    var value = values[i];
 	    
 	    if (typeof(value) == 'object') {
-		reduction['instructor'] = value;
+		reduction['user'] = value;
 	    } else if (typeof(value) == 'boolean') {
 		reduction['is_in_ht'] = value;
 	    }
 	}
 
 	// only return instructor info for courses that are in the holding tank
-	if(reduction['instructor'] != null && reduction['is_in_ht'] == true){
+	if(reduction['user'] != null && reduction['is_in_ht'] == true){
 	    return reduction;
 	}
     } // end of reduce function
 
+} // end of function def
+    
+
+
+// mailing list of ContEd instructors
+exports.d2l_d1_instructor_mlist = {
+    map: function(doc) {
+	var translated_doc;
+
+	// just get the instructors
+	if (doc['type'] == 'member' && doc['role']['status'] == "1" && doc['role']['@roletype'] == "02" && doc['datasource'] == "Destiny One") {
+	    translated_doc = {
+		'id': doc['sourcedid']['id'],
+		'courseid': doc['membership_sourcedid']['id'],
+		'datasource': doc['datasource'],
+		'type': doc['type']
+	    }
+	    emit(doc['sourcedid']['id'], translated_doc);
+	}
+	else if (doc['type'] == 'person' && doc['datasource'] == "Destiny One") {  // get the user info
+	    translated_doc = {
+		'email': doc['email'],
+		'type': doc['type']
+	    }	    
+	    emit(doc['userid'], translated_doc);
+	} // end of Lectures/Seminars/Exceptions
+    }, // end of map function
+
+    reduce: function(key, values, rereduce) {
+	var reduction = rereduce ? values[0] : {
+	    'instructor': null,
+	    'user': null
+	};
+
+	for (var i = rereduce ? 1 : 0; i < values.length; i++) {
+	    var value = values[i];
+	    
+	    if (typeof(value) == 'object') {
+		var src_map = {
+		    'member': 'instructor',
+		    'person': 'user'
+		};
+
+		var src_key = src_map[value['type']] || null;
+		
+		if (src_key == null) {
+		    continue;
+		}
+
+		if (reduction[src_key] == null) {
+		    reduction[src_key] = value;
+		}
+	    }
+	}
+
+	// only return instructor info
+	if(reduction['instructor'] != null && reduction['user']['email'] != null){
+	    return reduction;
+	}
+    } // end of reduce function
 } // end of function def
     
 
