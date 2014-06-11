@@ -1,1 +1,1 @@
-{doc.instructor.email}
+{doc.user.email}
