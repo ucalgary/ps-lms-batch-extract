@@ -540,24 +540,65 @@ exports.d2l_d1_instructor_mlist = {
 
 exports.ares_course = {
 	map: function(doc) {
-		if (doc['type'] == 'course' && doc['grouptype']['0']['typevalue']['@level'] == '0') {
-			var lmsutils = require('views/lib/lmsutils');
-			var translated_doc = {
-				'course_code_ps': doc['sourcedid']['id'],
-				'course_code_bb': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
-				'name': doc['description']['long'],
-				'semester': lmsutils.ps_to_ares_semester(doc['sourcedid']['id'])
+		var lmsutils = require('views/lib/lmsutils');
+
+		if (doc['type'] == 'course') {
+			if (doc['datasource'] == 'Destiny One') {
+				var translated_doc = {
+					'semester': doc['relationship']['sourcedid'][1]['id'],
+					'courseId': doc['sourcedid']['id'],
+					'name': doc['description']['long']
+				};
+
+				emit([doc['sourcedid']['id'], 0], translated_doc);
+			} else if (doc['datasource'] == 'PeopleSoft') {
+				var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
+					
+				if (bb_course_components[5] == 'L') {
+					var translated_doc = {
+						'semester': lmsutils.ps_to_ares_semester(doc['sourcedid']['id']),
+						'courseId': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
+						'name': doc['description']['long']
+					};
+
+					emit([translated_doc['courseId'], 0], translated_doc);
+				}
 			}
-
-			emit([translated_doc['course_code_bb'], 0], translated_doc);
 		} else if (doc['type'] == 'member' && doc['role']['@roletype'] == '02') {
-			var lmsutils = require('views/lib/lmsutils');
-			
-			emit([lmsutils.ps_to_bb_course_code(doc['membership_sourcedid']['id']), 1], doc['sourcedid']['id']);
-		}
-	}
-}
+			var courseId = null;
+			if (doc['datasource'] == 'Destiny One') {
+				courseId = doc['membership_sourcedid']['id'];
+				courseId = courseId.substring(0, courseId.length - 4);
+				emit([courseId, 1], doc['sourcedid']['id']);
+			} else {
+				courseId = lmsutils.ps_to_bb_course_code(doc['membership_sourcedid']['id']);
+				var bb_course_components = lmsutils.ps_to_bb_course_components(doc['membership_sourcedid']['id']);
 
-exports.ares_courseuser = {
-	
+				if (bb_course_components[5] == 'L') {
+					emit([courseId, 1], doc['sourcedid']['id']);
+				}
+			}
+		}
+	},
+
+	reduce: function(key, values, rereduce) {
+		var reduction = rereduce ? values[0] : {
+			'course': null,
+			'instructor': null
+		}
+
+		for (var i = (rereduce) ? 1 : 0; i < values.length; i++) {
+			var v = values[i];
+
+			if (v.substring) {
+				if (reduction['instructor'] == null) {
+					reduction['instructor'] = v;
+				}
+			} else {
+				reduction['course'] = v;
+			}
+		}
+
+		return reduction;
+	}
 }
