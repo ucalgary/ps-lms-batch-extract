@@ -602,3 +602,25 @@ exports.ares_course = {
 		return reduction;
 	}
 }
+
+exports.ares_courseuser = {
+	map: function(doc) {
+		if (doc['type'] == 'member') {
+			var lmsutils = require('views/lib/lmsutils');
+			var translated_doc = {
+				'id': doc['sourcedid']['id'],
+				'membership_id': doc['membership_sourcedid']['id'],
+				'role': {
+					'roletype': (doc['role']['@roletype'] == '02') ? 'Instructor' : 'User',
+					'status': doc['role']['status']
+				}
+			}
+
+			if (translated_doc['membership_id'].indexOf('_SEC', translated_doc['membership_id'].length - 4) !== -1) {
+				translated_doc['membership__id'] = translated_doc['membership_id'].substring(0, translated_doc['membership_id'].length - 4);
+			}
+
+			emit(doc._local_seq, translated_doc);
+		}
+	}
+}
