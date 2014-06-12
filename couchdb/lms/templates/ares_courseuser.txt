@@ -1,1 +1,1 @@
-{doc.membership_sourcedid.id}	{doc.sourcedid.id}	{doc.role.roletype}
+{doc.membership_id}	{doc.id}	{doc.role.roletype}
