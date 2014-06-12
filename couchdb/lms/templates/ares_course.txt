@@ -1,1 +1,1 @@
-semester	{doc.sourcedid.id}	{doc.description.short}	{doc.sourcedid.id}	{doc.sourcedid.id}	instructor
+{doc.course.semester}	{doc.course.courseId}	{doc.course.name}	{doc.course.courseId}	{doc.course.courseId}	{doc.instructor}
