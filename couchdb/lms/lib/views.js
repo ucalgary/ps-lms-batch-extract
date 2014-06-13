@@ -425,7 +425,7 @@ exports.d2l_ps_instructor_mlist = {
     map: function(doc) {
 	var lmsutils = require('views/lib/lmsutils');
 	
-	if (doc['type'] == 'member' && doc['role']['status'] == "1" && doc['role']['@roletype'] == "02") {
+	if (doc['type'] == 'member' && doc['role']['status'] == "1" && doc['role']['@roletype'] == "02" && doc['datasource'] == "PeopleSoft") {
 	    var translated_doc = {
 		'id': doc['sourcedid']['id'],
 		'email': doc['role']['email'],
@@ -434,7 +434,7 @@ exports.d2l_ps_instructor_mlist = {
 	    }
 	    emit(doc['membership_sourcedid']['id'], translated_doc);
 	} // end of instructor filtering
-	else if (doc['type'] == 'course') {
+	else if (doc['type'] == 'course' && doc['datasource'] == "PeopleSoft") {
 	    var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
 	    
 	    // only output Lectures, Seminars, and exceptions
