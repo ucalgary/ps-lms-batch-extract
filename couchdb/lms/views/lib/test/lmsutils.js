@@ -74,3 +74,63 @@ exports.process_ps_course_code_semesters = {
 	}
 
 }
+
+exports.process_ps_course_code_full_year_courses = {
+
+	test_full_year_a: function(test) {
+		var data = lmsutils.process_ps_course_code('2145-UCALG-ENGG-513A-LEC01-50711');
+
+		test.equals(data['components'][4], 'A');
+		test.equals(data['bb_code'], 'S2014ENGG513ABL01');
+		test.done();
+	},
+
+	test_full_year_b: function(test) {
+		var data = lmsutils.process_ps_course_code('2145-UCALG-ENGG-513B-LEC01-50711');
+
+		test.equals(data['components'][4], 'B');
+		test.equals(data['bb_code'], 'S2014ENGG513BL01');
+		test.done();
+	}
+
+}
+
+exports.process_ps_course_code_section_types = {
+
+	test_lectures: function(test) {
+		var data1 = lmsutils.process_ps_course_code('2145-UCALG-ANTH-402-LEC01-50723');
+		var data2 = lmsutils.process_ps_course_code('2145-UCALG-ANTH-402-LECL01-50723');
+
+		test.equals(data1['components'][5], 'L');
+		test.equals(data2['components'][5], 'L');
+		test.done();
+	},
+
+	test_labs: function(test) {
+		var data1 = lmsutils.process_ps_course_code('2145-UCALG_CHEM_402_LAB01-50292');
+		var data2 = lmsutils.process_ps_course_code('2145-UCALG_CHEM_402_LABB01-50292');
+
+		test.equals(data1['components'][5], 'B');
+		test.equals(data2['components'][5], 'B');
+		test.done();
+	},
+
+	test_tutorials: function(test) {
+		var data1 = lmsutils.process_ps_course_code('2141-UCALG_MDPH_731B_TUT01-12318');
+		var data2 = lmsutils.process_ps_course_code('2141-UCALG_MDPH_731B_TUTT01-12318');
+
+		test.equals(data1['components'][5], 'T');
+		test.equals(data2['components'][5], 'T');
+		test.done();
+	},
+
+	test_seminars: function(test) {
+		var data1 = lmsutils.process_ps_course_code('2141-UCALG_OPMA_797_SEM01-16019');
+		var data2 = lmsutils.process_ps_course_code('2141-UCALG_OPMA_797_SEMS01-16019');
+
+		test.equals(data1['components'][5], 'S');
+		test.equals(data2['components'][5], 'S');
+		test.done();
+	}
+
+}
