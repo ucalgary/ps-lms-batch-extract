@@ -20,6 +20,28 @@ exports.course_information = {
 }
 
 // ------------------------------------------------------------
+// Processed information for export to Desire2Learn and Ares
+// ------------------------------------------------------------
+
+exports.processed_courses = {
+	map: function(doc) {
+		
+	}
+}
+
+exports.processed_memberships = {
+	map: function(doc) {
+
+	}
+}
+
+exports.processed_people = {
+	map: function(doc) {
+		
+	}
+}
+
+// ------------------------------------------------------------
 // Views for Desire2Learn Holding Tank
 // ------------------------------------------------------------
 
