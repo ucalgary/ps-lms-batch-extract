@@ -48,6 +48,17 @@ exports.process_ps_course_code = function(ps_code) {
 	};
 }
 
+// Deduce originating system based on course codes
+exports.course_code_originating_system = function(course_code) {
+	if (/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]$/.test(course_code)) {
+		return 'Destiny One';
+	} else if (/^\d\d\d\d-UCALG/.test(course_code)) {
+		return 'PeopleSoft';
+	} else {
+		return null;
+	}
+}
+
 
 // determines what to do with course ID
 exports.get_course_code = function(raw_id, ps_suffix) {

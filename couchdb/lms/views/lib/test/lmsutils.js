@@ -134,3 +134,52 @@ exports.process_ps_course_code_section_types = {
 	}
 
 }
+
+exports.course_code_originating_system = {
+
+	test_destiny_one_codes: function(test) {
+		var codes = [
+			'WRI_440_003',
+			'UPG_220_012',
+			'TSL_121_015',
+			'SPA_101_170'
+		];
+
+		for (i in codes) {
+			test.equals(lmsutils.course_code_originating_system(codes[i]), 'Destiny One');
+		}
+
+		test.done();
+	},
+
+	test_peoplesoft_codes: function(test) {
+		var codes = [
+			'2145-UCALG-ANTH-402-LEC01-50723',
+			'2145-UCALG_CHEM_402_LABB01-50292',
+			'2141-UCALG-OPMA-797-SEMS01-16019',
+			'2141-UCALG_FILM_201_TUTT01-12391'
+		];
+
+		for (i in codes) {
+			test.equals(lmsutils.course_code_originating_system(codes[i]), 'PeopleSoft');
+		}
+
+		test.done();
+	},
+
+	test_unknown_codes: function(test) {
+		var codes = [
+			'ABC_000_1111',
+			'2145-UCALE-ANTH-402-LEC01-50723',
+			'testing-test_test',
+			'lorem ipsum dolor'
+		];
+
+		for (i in codes) {
+			test.equals(lmsutils.course_code_originating_system(codes[i]), null);
+		}
+
+		test.done();
+	}
+
+}
