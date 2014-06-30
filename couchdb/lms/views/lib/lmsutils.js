@@ -43,31 +43,36 @@ exports.course_code_parse = function(course_code) {
 		var course_session = { 1:'Winter', 3:'Spring', 5:'Summer', 7:'Fall' }[ps_code_parts[0].charAt(3)];
 		var human_readable_semester = course_session + ' ' + course_year;
 
+		// Generate a basic subject and number
+		var subject_and_number = ps_code_parts[2] + ' ' + course_number;
+
 		// Return the results
 		return {
 			'system': system,
 			'components': course_components,
-			'course_code': ps_code,
-			'bb_code': bb_course_code,
+			'system_course_code': ps_code,
+			'canonical_course_code': bb_course_code,
+			'subject_and_number': subject_and_number,
 			'semester_name': human_readable_semester
 		};
 	} else if (system == 'Destiny One') {
 		var course_code_parts = course_code.split('_');
 		var course_components = [
-			null,
-			null,
-			course_code_parts[0],
-			course_code_parts[1],
-			null,
-			null,
-			course_code_parts[2]
-		]
+			null,										// 0: single character semester (P, S, F, W)
+			null,										// 1: four digit year (2014)
+			course_code_parts[0],		// 2: subject code (WRI)
+			course_code_parts[1],		// 3: course number (201)
+			null,										// 4: A/B section or neither
+			null,										// 5: single character section (L, B, T, S, C, P)
+			course_code_parts[2]		// 6: section number (011)
+		];
 
 		return {
 			'system': system,
 			'components': course_components,
-			'course_code': course_code,
-			'bb_code': course_code,
+			'system_course_code': course_code,
+			'canonical_course_code': course_code,
+			'subject_and_number': course_code_parts[0] + ' ' + course_code_parts[1],
 			'semester_name': 'Continuing Education'
 		};
 	}

@@ -19,12 +19,12 @@ exports.course_code_parse_general = {
 	},
 
 	test_course_code: function(test) {
-		test.equals(this.data['course_code'], '2145-UCALG-ANTH-402-LEC01-50723');
+		test.equals(this.data['system_course_code'], '2145-UCALG-ANTH-402-LEC01-50723');
 		test.done();
 	},
 
 	test_bb_code: function(test) {
-		test.equals(this.data['bb_code'], 'S2014ANTH402L01');
+		test.equals(this.data['canonical_course_code'], 'S2014ANTH402L01');
 		test.done();
 	},
 
@@ -81,7 +81,7 @@ exports.course_code_parse_full_year_courses = {
 		var data = lmsutils.course_code_parse('2145-UCALG-ENGG-513A-LEC01-50711');
 
 		test.equals(data['components'][4], 'A');
-		test.equals(data['bb_code'], 'S2014ENGG513ABL01');
+		test.equals(data['canonical_course_code'], 'S2014ENGG513ABL01');
 		test.done();
 	},
 
@@ -89,7 +89,7 @@ exports.course_code_parse_full_year_courses = {
 		var data = lmsutils.course_code_parse('2145-UCALG-ENGG-513B-LEC01-50711');
 
 		test.equals(data['components'][4], 'B');
-		test.equals(data['bb_code'], 'S2014ENGG513BL01');
+		test.equals(data['canonical_course_code'], 'S2014ENGG513BL01');
 		test.done();
 	}
 
