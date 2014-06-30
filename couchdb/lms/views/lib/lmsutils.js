@@ -53,6 +53,7 @@ exports.course_code_parse = function(course_code) {
 			'system_course_code': ps_code,
 			'canonical_course_code': bb_course_code,
 			'subject_and_number': subject_and_number,
+			'semester': ps_code_parts[0],
 			'semester_name': human_readable_semester
 		};
 	} else if (system == 'Destiny One') {
@@ -73,6 +74,7 @@ exports.course_code_parse = function(course_code) {
 			'system_course_code': course_code,
 			'canonical_course_code': course_code,
 			'subject_and_number': course_code_parts[0] + ' ' + course_code_parts[1],
+			'semester': 'CTED',
 			'semester_name': 'Continuing Education'
 		};
 	}
