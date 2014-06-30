@@ -1,9 +1,9 @@
 var lmsutils = require('../lmsutils');
 
-exports.process_ps_course_code_general = {
+exports.course_code_parse_general = {
 
 	setUp: function(callback) {
-		this.data = lmsutils.process_ps_course_code('2145-UCALG-ANTH-402-LEC01-50723');
+		this.data = lmsutils.course_code_parse('2145-UCALG-ANTH-402-LEC01-50723');
 		callback();
 	},
 
@@ -18,8 +18,8 @@ exports.process_ps_course_code_general = {
 		test.done();
 	},
 
-	test_ps_code: function(test) {
-		test.equals(this.data['ps_code'], '2145-UCALG-ANTH-402-LEC01-50723');
+	test_course_code: function(test) {
+		test.equals(this.data['course_code'], '2145-UCALG-ANTH-402-LEC01-50723');
 		test.done();
 	},
 
@@ -35,10 +35,10 @@ exports.process_ps_course_code_general = {
 
 }
 
-exports.process_ps_course_code_semesters = {
+exports.course_code_parse_semesters = {
 
 	test_winter: function(test) {
-		var data = lmsutils.process_ps_course_code('2131-UCALG_ZOOL_377_LEC01-11540');
+		var data = lmsutils.course_code_parse('2131-UCALG_ZOOL_377_LEC01-11540');
 
 		test.equals(data['components'][0], 'W');
 		test.equals(data['components'][1], '2013');
@@ -47,7 +47,7 @@ exports.process_ps_course_code_semesters = {
 	},
 
 	test_spring: function(test) {
-		var data = lmsutils.process_ps_course_code('2143-UCALG-DRAM-651-SEMS01-31238');
+		var data = lmsutils.course_code_parse('2143-UCALG-DRAM-651-SEMS01-31238');
 
 		test.equals(data['components'][0], 'P');
 		test.equals(data['components'][1], '2014');
@@ -56,7 +56,7 @@ exports.process_ps_course_code_semesters = {
 	},
 
 	test_summer: function(test) {
-		var data = lmsutils.process_ps_course_code('2155-UCALG_KNES_260_LABB01-50180');
+		var data = lmsutils.course_code_parse('2155-UCALG_KNES_260_LABB01-50180');
 
 		test.equals(data['components'][0], 'S');
 		test.equals(data['components'][1], '2015');
@@ -65,7 +65,7 @@ exports.process_ps_course_code_semesters = {
 	},
 
 	test_fall: function(test) {
-		var data = lmsutils.process_ps_course_code('2167-UCALG-NEUR-500A-LABB01-76013');
+		var data = lmsutils.course_code_parse('2167-UCALG-NEUR-500A-LABB01-76013');
 
 		test.equals(data['components'][0], 'F');
 		test.equals(data['components'][1], '2016');
@@ -75,10 +75,10 @@ exports.process_ps_course_code_semesters = {
 
 }
 
-exports.process_ps_course_code_full_year_courses = {
+exports.course_code_parse_full_year_courses = {
 
 	test_full_year_a: function(test) {
-		var data = lmsutils.process_ps_course_code('2145-UCALG-ENGG-513A-LEC01-50711');
+		var data = lmsutils.course_code_parse('2145-UCALG-ENGG-513A-LEC01-50711');
 
 		test.equals(data['components'][4], 'A');
 		test.equals(data['bb_code'], 'S2014ENGG513ABL01');
@@ -86,7 +86,7 @@ exports.process_ps_course_code_full_year_courses = {
 	},
 
 	test_full_year_b: function(test) {
-		var data = lmsutils.process_ps_course_code('2145-UCALG-ENGG-513B-LEC01-50711');
+		var data = lmsutils.course_code_parse('2145-UCALG-ENGG-513B-LEC01-50711');
 
 		test.equals(data['components'][4], 'B');
 		test.equals(data['bb_code'], 'S2014ENGG513BL01');
@@ -95,11 +95,11 @@ exports.process_ps_course_code_full_year_courses = {
 
 }
 
-exports.process_ps_course_code_section_types = {
+exports.course_code_parse_section_types = {
 
 	test_lectures: function(test) {
-		var data1 = lmsutils.process_ps_course_code('2145-UCALG-ANTH-402-LEC01-50723');
-		var data2 = lmsutils.process_ps_course_code('2145-UCALG-ANTH-402-LECL01-50723');
+		var data1 = lmsutils.course_code_parse('2145-UCALG-ANTH-402-LEC01-50723');
+		var data2 = lmsutils.course_code_parse('2145-UCALG-ANTH-402-LECL01-50723');
 
 		test.equals(data1['components'][5], 'L');
 		test.equals(data2['components'][5], 'L');
@@ -107,8 +107,8 @@ exports.process_ps_course_code_section_types = {
 	},
 
 	test_labs: function(test) {
-		var data1 = lmsutils.process_ps_course_code('2145-UCALG_CHEM_402_LAB01-50292');
-		var data2 = lmsutils.process_ps_course_code('2145-UCALG_CHEM_402_LABB01-50292');
+		var data1 = lmsutils.course_code_parse('2145-UCALG_CHEM_402_LAB01-50292');
+		var data2 = lmsutils.course_code_parse('2145-UCALG_CHEM_402_LABB01-50292');
 
 		test.equals(data1['components'][5], 'B');
 		test.equals(data2['components'][5], 'B');
@@ -116,8 +116,8 @@ exports.process_ps_course_code_section_types = {
 	},
 
 	test_tutorials: function(test) {
-		var data1 = lmsutils.process_ps_course_code('2141-UCALG_MDPH_731B_TUT01-12318');
-		var data2 = lmsutils.process_ps_course_code('2141-UCALG_MDPH_731B_TUTT01-12318');
+		var data1 = lmsutils.course_code_parse('2141-UCALG_MDPH_731B_TUT01-12318');
+		var data2 = lmsutils.course_code_parse('2141-UCALG_MDPH_731B_TUTT01-12318');
 
 		test.equals(data1['components'][5], 'T');
 		test.equals(data2['components'][5], 'T');
@@ -125,8 +125,8 @@ exports.process_ps_course_code_section_types = {
 	},
 
 	test_seminars: function(test) {
-		var data1 = lmsutils.process_ps_course_code('2141-UCALG_OPMA_797_SEM01-16019');
-		var data2 = lmsutils.process_ps_course_code('2141-UCALG_OPMA_797_SEMS01-16019');
+		var data1 = lmsutils.course_code_parse('2141-UCALG_OPMA_797_SEM01-16019');
+		var data2 = lmsutils.course_code_parse('2141-UCALG_OPMA_797_SEMS01-16019');
 
 		test.equals(data1['components'][5], 'S');
 		test.equals(data2['components'][5], 'S');
