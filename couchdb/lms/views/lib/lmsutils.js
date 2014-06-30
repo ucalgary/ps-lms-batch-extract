@@ -1,3 +1,54 @@
+// Process PeopleSoft course codes into other forms
+exports.process_ps_course_code = function(ps_code) {
+	var ps_code_parts = ps_code.split(/[-_]/);
+	if (ps_code_parts.length != 6) return null;
+	var course_section_parts = /(\D+)(.*)/.exec(ps_code_parts[4])
+
+	// Separate out the PeopleSoft code into its components
+	var course_year = ps_code_parts[0].substring(0, 1) + '0' + ps_code_parts[0].substring(1, 3);
+	var course_session = { 3:'P', 5:'S', 7:'F', 1:'W' }[ps_code_parts[0].charAt(3)];
+	var course_number = ps_code_parts[3].replace(/[AB]/g, '');
+	var course_AB = ps_code_parts[3].replace(/[0-9]/g, '');
+	var course_section_type = { 'LEC':'L',
+															'LECL':'L',
+															'LAB':'B',
+															'LABB':'B',
+															'TUT':'T',
+															'TUTT':'T',
+															'SEMS':'S',
+															'SEM':'S',
+															'ALL':'ALL' }[course_section_parts[1]];
+	var course_section_number = course_section_parts[2].replace(/\D/g, '');
+	var course_components = [
+		course_session,					// 0: single character semester (P, S, F, W)
+		course_year,						// 1: four digit year (2014)
+		ps_code_parts[2],				// 2: subject code (ENGL)
+		course_number,					// 3: course number (201)
+		course_AB,							// 4: A/B section or neither
+		course_section_type,		// 5: single character section (L, B, T, S, C, P)
+		course_section_number		// 6: section number (01)
+	];
+
+	// Generate a Blackboard-style course code
+	var bb_course_components = course_components.slice();
+	bb_course_components[4] = bb_course_components[4].replace(/A/g, 'AB');
+	var bb_course_code = bb_course_components.join('').replace(/\./g, '');
+
+	// Generate a human-readable semester name
+	var course_year = ps_code_parts[0].substring(0, 1) + '0' + ps_code_parts[0].substring(1, 3);
+	var course_session = { 1:'Winter', 3:'Spring', 5:'Summer', 7:'Fall' }[ps_code_parts[0].charAt(3)];
+	var human_readable_semester = course_session + ' ' + course_year;
+
+	// Return the results
+	return {
+		'components': course_components,
+		'ps_code': ps_code,
+		'bb_code': bb_code,
+		'semester_name': human_readable_semester
+	};
+}
+
+
 // determines what to do with course ID
 exports.get_course_code = function(raw_id, ps_suffix) {
     var course_id = '';
