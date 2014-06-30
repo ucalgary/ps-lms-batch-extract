@@ -605,7 +605,7 @@ exports.ares_course = {
 
 exports.ares_courseuser = {
 	map: function(doc) {
-		if (doc['type'] == 'member') {
+		if (doc['type'] == 'member' && doc['role']['status'] == '1') {
 			var lmsutils = require('views/lib/lmsutils');
 			var translated_doc = {
 				'id': doc['sourcedid']['id'],
