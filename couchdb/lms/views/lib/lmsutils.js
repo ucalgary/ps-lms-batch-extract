@@ -43,7 +43,7 @@ exports.process_ps_course_code = function(ps_code) {
 	return {
 		'components': course_components,
 		'ps_code': ps_code,
-		'bb_code': bb_code,
+		'bb_code': bb_course_code,
 		'semester_name': human_readable_semester
 	};
 }
