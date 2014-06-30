@@ -2,28 +2,19 @@
 // Utility views
 // ------------------------------------------------------------
 
-exports.ps_to_bb_course_code = {
+exports.course_information = {
 	map: function(doc) {
 		if (doc['type'] == 'course') {
 			var lmsutils = require('views/lib/lmsutils');
 			var bb_code = lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']);
-
-			emit(doc['sourcedid']['id'], bb_code);
-		}
-	}
-}
-
-exports.half_vs_full_courses = {
-	map: function (doc) {
-		if (doc['type'] == 'course') {
-			var lmsutils = require('views/lib/lmsutils');
 			var sub_num = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
 
-			if (sub_num[1].match(/[\d]+[AB]+/)) {
-				emit('full', doc['sourcedid']['id']);
-			} else {
-				emit('half', doc['sourcedid']['id']);
-			}
+			var result = {
+				'bb_code': bb_code,
+				'half_or_full': sub_num[1].match(/[\d]+[AB]+/) ? 'full' : 'half'
+			};
+
+			emit(doc['sourcedid']['id'], result);
 		}
 	}
 }
