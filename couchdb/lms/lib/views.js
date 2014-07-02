@@ -25,7 +25,46 @@ exports.course_information = {
 
 exports.processed_courses = {
 	map: function(doc) {
-		
+		if (doc['type'] == 'course') {
+			var lmsutils = require('views/lib/lmsutils');
+			var data = {};
+
+			// Parse the course code into its constituent parts
+			data['code_info'] = lmsutils.course_code_parse(doc['sourcedid']['id']);
+
+			// Create identifiers for this course's D2L template, offering, and section
+			data['d2l_identifiers'] = {
+				'template': data['code_info']['subject_and_number'].replace(' ', '_'),
+				'offering': data['code_info']['canonical_course_code'],
+				'section': data['code_info']['canonical_course_code'] + '_SEC'
+			};
+
+			data['is_mapped'] = 'mapping' in doc;
+			data['description'] = doc['description'];
+
+			// Relate D2L offerings and sections to their appropriate parents
+			// Template parents differ between PeopleSoft and Destiny One
+			data['d2l_relationships'] = {
+				'offering': [
+					data['code_info']['semester'],															// semester (eg: 2141)
+					data['code_info']['subject_and_number'].replace(' ', '_')		// template (eg: ACCT_217)
+				],
+				'section': [
+					lmsutils.course_code_parse('mapping' in doc ? doc['mapping']['sourcedid']['id'] : doc['sourcedid']['id'])['canonical_course_code']
+				]
+			}
+			if (data['code_info']['system'] == 'PeopleSoft') {
+				data['d2l_relationships']['template'] = [
+					doc['org']['id']
+				];
+			} else if (data['code_info']['system'] == 'Destiny One') {
+				data['d2l_relationships']['template'] = [
+					'CONTED'
+				];
+			}
+
+			emit([data['code_info']['system'], data['code_info']['system_course_code']], data);
+		}
 	}
 }
 
@@ -44,147 +83,6 @@ exports.processed_people = {
 // ------------------------------------------------------------
 // Views for Desire2Learn Holding Tank
 // ------------------------------------------------------------
-
-// 1 Templates
-exports.d2l_template = {
-	map: function(doc) {
-		if (doc['type'] == 'course') {
-		    // Check for ContEd course code first
-		    if(/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]/.test(doc['sourcedid']['id'])){
-			var template_id =  doc['sourcedid']['id'].replace(/_[0-9][0-9][0-9]$/g, "") // strip away lecture number
-			var translated_doc = {
-			    'id': template_id,
-			    'description': {
-				'short': template_id,
-				'long': template_id,
-			    },
-			    'relationships': [ "CONTED" ] // department code
-			} // end of translated_doc
-		    } // end of processing D1 data
-		    else // PS course
-			{
-			    var lmsutils = require('views/lib/lmsutils');
-			    var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
-			    var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
-			    var suffix = '';
-			    
-			    // keep Qatar templates separate so that they are organized in their
-			    // own faculty/department
-			    if (doc['org']['id'] == 'QA') {
-				suffix = 'Q';
-			    }
-			    
-			    var translated_doc = {
-				'id': subject_and_number[0] + '_' + base_number + suffix,
-				'description': {
-				                'short': subject_and_number[0] + '_' + base_number + suffix,
-						'long': subject_and_number[0] + ' ' + base_number + suffix
-				},
-				'relationships': [
-						  doc['org']['id']		// department code (eg: HA)
-						  ]
-			    } // end of translated_doc
-			} // end of processing PS data
-		    emit(translated_doc['id'], translated_doc);
-		}
-	},
-
-	reduce: function(key, values, rereduce) {
-		return values[0];
-	}
-}
-
-// 2 Offerings and 3 Sections
-exports.d2l_offering = {
-	map: function(doc) {
-	if (doc['type'] == 'course'){
-		var lmsutils = require('views/lib/lmsutils');
-		
-		// Process ContEd courses
-		if(doc['datasource'] == "Destiny One"){
-
-			// this if statement probably isn't needed, but still...
-			if(/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]/.test(doc['sourcedid']['id'])){
-				var course_id = doc['sourcedid']['id'];
-				var translated_doc = {
-				'id': course_id,
-				'section_id': course_id + '_SEC',
-				'description': {
-					'short': course_id,
-					'long': doc['description']['long']
-				},
-				'relationships': [
-						  doc['relationship']['sourcedid'][1]['id'],				// semester (eg: CTED)
-						  doc['relationship']['sourcedid'][0]['id']				// template (eg: ICT_680)
-						  ],
-				'section_relationships': [
-							  lmsutils.get_course_code(('mapping' in doc) ? 
-										   doc['mapping']['sourcedid']['id'] :
-										   doc['sourcedid']['id'], '')
-							  ],
-				'is_mapped': ('mapping' in doc)
-				} // end of translated_doc
-			} // end of filtering Cont Ed course ID
-			emit(doc._local_seq, translated_doc);
-		} // end of processing D1 data
-
-		// Process PeopleSoft courses
-		else if(doc['datasource'] == "PeopleSoft"){  
-			if(doc['grouptype']['0']['typevalue']['@level'] == '0') {   // only do grouptype CLASSES
-				var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
-
-				// only output Lectures, Seminars, and exceptions
-				if((bb_course_components[5] == 'L' || bb_course_components[5] == 'S' || doc['lmsexport']['include'] == '1') &&
-				   // don't process "B" sections
-				   (bb_course_components[4] == 'A' || bb_course_components[4] == '')){
-					
-					var suffix = '';
-					
-					// keep Qatar templates separate so that they are organized in their
-					// own faculty/department
-					if (doc['org']['id'] == 'QA') {
-						suffix = 'Q';
-					}
-
-					var bb_course_code = lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']);
-					var semester_name = { 'P':'Spring', 'S':'Summer', 'F':'Fall', 'W':'Winter' }[bb_course_components[0]];
-					var base_number = /(\d+).*/.exec(bb_course_components[3])[1];
-					var short_prefix = bb_course_components[2] + ' '  // subject code (ENGL)
-			 		                 + bb_course_components[3]        // course number (201)
-					                 + bb_course_components[4].replace(/A/g, "AB") + ' '  // AB course if applicable
-					                 + bb_course_components[5]		// single character section (L, B, T, S, C, P)
-					                 + bb_course_components[6];	   // section number (01)
-					var long_prefix  = short_prefix
-									         + ' - ('
-									         + semester_name + ' '			// semester name (Spring, Summer, Fall, Winter)
-									         + bb_course_components[1]		// four digit year (2014)
-									         + ') - ';
-					var translated_doc = {
-						'id': bb_course_code,
-						'section_id': bb_course_code + '_SEC',
-						'description': {
-							'short': short_prefix,
-							'long': long_prefix + doc['description']['long']
-						},
-						'relationships': [
-								  doc['relationship']['sourcedid']['id'],				// semester (eg: 2141)
-								  bb_course_components[2] + '_' + base_number + suffix			// template (eg: ACCT_217)
-								  ],
-						'section_relationships': [
-									  lmsutils.ps_to_bb_course_code(('mapping' in doc) ? 
-													doc['mapping']['sourcedid']['id'] :
-													doc['sourcedid']['id'])
-									  ],
-						'is_mapped': ('mapping' in doc)
-					} // end of translated_doc
-					emit(doc._local_seq, translated_doc);			
-				} // end of filtering "B" courses
-			} // end of doc['grouptype']['typevalue']['@level'] == '0'
-		} // end of processing PS data
-	} // end of type == course
-    } // end of mapping function
-}
-
 
 // 4 Users
 exports.d2l_user = {
@@ -550,71 +448,6 @@ exports.d2l_d1_instructor_mlist = {
 // ------------------------------------------------------------
 // Views for Atlas Systems Ares
 // ------------------------------------------------------------
-
-exports.ares_course = {
-	map: function(doc) {
-		var lmsutils = require('views/lib/lmsutils');
-
-		if (doc['type'] == 'course') {
-			if (doc['datasource'] == 'Destiny One') {
-				var translated_doc = {
-					'semester': doc['relationship']['sourcedid'][1]['id'],
-					'courseId': doc['sourcedid']['id'],
-					'name': doc['description']['long']
-				};
-
-				emit([doc['sourcedid']['id'], 0], translated_doc);
-			} else if (doc['datasource'] == 'PeopleSoft') {
-				var bb_course_components = lmsutils.ps_to_bb_course_components(doc['sourcedid']['id']);
-					
-				if (bb_course_components[5] == 'L') {
-					var translated_doc = {
-						'semester': lmsutils.ps_to_ares_semester(doc['sourcedid']['id']),
-						'courseId': lmsutils.ps_to_bb_course_code(doc['sourcedid']['id']),
-						'name': doc['description']['long']
-					};
-
-					emit([translated_doc['courseId'], 0], translated_doc);
-				}
-			}
-		} else if (doc['type'] == 'member' && doc['role']['@roletype'] == '02') {
-			var courseId = null;
-			if (doc['datasource'] == 'Destiny One') {
-				courseId = doc['membership_sourcedid']['id'];
-				courseId = courseId.substring(0, courseId.length - 4);
-				emit([courseId, 1], doc['sourcedid']['id']);
-			} else {
-				courseId = lmsutils.ps_to_bb_course_code(doc['membership_sourcedid']['id']);
-				var bb_course_components = lmsutils.ps_to_bb_course_components(doc['membership_sourcedid']['id']);
-
-				if (bb_course_components[5] == 'L') {
-					emit([courseId, 1], doc['sourcedid']['id']);
-				}
-			}
-		}
-	},
-
-	reduce: function(key, values, rereduce) {
-		var reduction = rereduce ? values[0] : {
-			'course': null,
-			'instructor': null
-		}
-
-		for (var i = (rereduce) ? 1 : 0; i < values.length; i++) {
-			var v = values[i];
-
-			if (v.substring) {
-				if (reduction['instructor'] == null) {
-					reduction['instructor'] = v;
-				}
-			} else {
-				reduction['course'] = v;
-			}
-		}
-
-		return reduction;
-	}
-}
 
 exports.ares_courseuser = {
 	map: function(doc) {
