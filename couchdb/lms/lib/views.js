@@ -70,7 +70,52 @@ exports.processed_courses = {
 
 exports.processed_memberships = {
 	map: function(doc) {
+		if (doc['type'] == 'member') {
+			var lmsutils = require('views/lib/lmsutils');
+			var data = {};
 
+			// Parse the course code
+			var code_info = lmsutils.course_code_parse(doc['membership_sourcedid']['id']);
+			var system_course_code = code_info['system_course_code'];
+			
+			var member_id = doc['sourcedid']['id'];
+			data['member'] = member_id;
+
+			// Populate membership and role information
+			data['membership_d2l_identifiers'] = {
+				'template': code_info['subject_and_number'].replace(' ', '_'),
+				'offering': code_info['canonical_course_code'],
+				'section': code_info['canonical_course_code'] + '_SEC'
+			};
+			data['role'] = {
+				'roletype': doc['role']['@roletype'],
+				'status': doc['role']['status']
+			};
+
+			emit([system_course_code, member_id], data);
+		}
+	},
+
+	reduce: function(key, values, rereduce) {
+		var members = [];
+		var combined_data = {
+			'membership_d2l_identifiers': values[0]['membership_d2l_identifiers'],
+			'members': members
+		};
+		
+		for (var i =  0; i < values.length; i++) {
+			var value = values[i];
+			if (rereduce) {
+				members.push.apply(members, value['members']);
+			} else {
+				members.push({
+					'member': value['member'],
+					'role': value['role']
+				});
+			}
+		}
+
+		return combined_data;
 	}
 }
 
@@ -214,25 +259,7 @@ exports.d2l_user = {
 	}
 }
 
-// 5 Enrollments
-exports.d2l_enrollment = {
-	map: function(doc) {
-		if (doc['type'] == 'member') {
-			var lmsutils = require('views/lib/lmsutils');
-			var translated_doc = {
-				'id': doc['sourcedid']['id'],
-				//'membership_id': lmsutils.ps_to_bb_course_code(doc['membership_sourcedid']['id']) + '_SEC',
-				'membership_id': lmsutils.get_course_code(doc['membership_sourcedid']['id'], '_SEC'),
-				'role': {
-					'roletype': doc['role']['@roletype'],
-					'status': doc['role']['status']
-				}
-			}
 
-			emit(doc._local_seq, translated_doc);
-		}
-	}
-}
 
 // List all mappings
 exports.d2l_list_mappings = {
