@@ -121,133 +121,73 @@ exports.processed_memberships = {
 
 exports.processed_people = {
 	map: function(doc) {
-		
-	}
-}
-
-// ------------------------------------------------------------
-// Views for Desire2Learn Holding Tank
-// ------------------------------------------------------------
-
-// 4 Users
-exports.d2l_user = {
-	map: function(doc) {
 		if (doc['type'] == 'person') {
 			var lmsutils = require('views/lib/lmsutils');
-			var translated_doc = {
-				'id': doc['userid'],
-				'name': {
-					'given': doc['name']['n']['given'],
-					'family': doc['name']['n']['family']
-				},
+			var src_map = {
+				'PeopleSoft': 'ps',
+				'Destiny One': 'd1'	
+			};
+			var src_key = src_map[doc['datasource']] || null;
+			var details = {
+				'name': doc['name'],
 				'email': doc['email'],
-				'datasource': doc['datasource'],
-				'datetime': doc['datetime'],
+				'datetime': Math.floor(lmsutils.DateFromISOString(doc['datetime'] / 1000)),
 				'attribute_revisions': doc['attribute_revisions']
-			}
-			var key = [
-				doc['userid'],
-				Math.floor(lmsutils.DateFromISOString(doc['datetime'])/ 1000)
-			];
+			};
+			var data = {
+				'ps': null,
+				'd1': null,
+				'is_ps_instructor': false
+			};
+			data[src_key] = details;
 
-			emit(key, translated_doc);
+			emit([doc['userid']], data);
 		} else if (doc['type'] == 'member') {
 			if (doc['datasource'] == 'PeopleSoft' && doc['role']['@roletype'] == '02') {
 				var key = [
 					doc['sourcedid']['id'],
-					'ps_instructor'
+					'is_ps_instructor'
 				];
 
-				emit(key, true)
+				emit(key, true);
 			}
 		}
 	},
 
-	reduce: function(key, values, rereduce) {
-		var DateFromISOString = function(s) {
-			var day, tz,
-			rx =/^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):(\d\d))?$/,
-			p = rx.exec(s) || [];
-
-			if (p[1]){
-				day=  p[1].split(/\D/);
-				for (var i = 0, L = day.length; i < L; i++) {
-					day[i]= parseInt(day[i], 10) || 0;
-				}
-				day[1] -= 1;
-				day = new Date(Date.UTC.apply(Date, day));
-				if (!day.getDate()) return NaN;
-				if (p[5]){
-					tz = (parseInt(p[5], 10) * 60);
-					if (p[6]) tz+= parseInt(p[6], 10);
-					if (p[4] == '+') tz *= -1;
-					if (tz) day.setUTCMinutes(day.getUTCMinutes() + tz);
-				}
-				return day;
-			}
-			return NaN;
-		};
-
-		var DateToISOString = function(d) {
-			function pad(number) {
-				if (number < 10) {
-					return '0' + number;
-				}
-
-				return number;
-			}
-
-			return d.getUTCFullYear() +
-				'-' + pad(d.getUTCMonth() + 1) +
-				'-' + pad(d.getUTCDate()) + 
-				'T' + pad(d.getUTCHours()) +
-				':' + pad(d.getUTCMinutes()) +
-				':' + pad(d.getUTCSeconds()) +
-				'.' + (d.getUTCMilliseconds() / 1000).toFixed(3).slice(2,5) +
-				'Z';
-		}
-
-		var reduction = rereduce ? values[0] : {
+	reduce: function(keys, values, rereduce) {
+		var reduction = {
 			'ps': null,
 			'd1': null,
 			'is_ps_instructor': false
 		};
 
-		for (var i = rereduce ? 1 : 0; i < values.length; i++) {
+		for (var i = 0; i < values.length; i++) {
 			var value = values[i];
 
 			if (typeof(value) == 'object') {
-				var src_map = {
-					'PeopleSoft': 'ps',
-					'Destiny One': 'd1'	
-				};
-				var src_key = src_map[value['datasource']] || null;
+				var key = keys[i];
+				var src_keys = ['ps', 'd1'];
 
-				if (src_key == null) {
-					continue;
-				}
+				for (var j = 0; j < src_keys.length; j++) {
+					var src_key = src_keys[j];
 
-				if (reduction[src_key] != null) {
-					var existing_datetime = DateFromISOString(reduction[src_key]['datetime']) || 0;
-					var value_datetime = DateFromISOString(value['datetime']) || 0;	
-				}
-				
-				if (reduction[src_key] == null || (value_datetime >= existing_datetime)) {
-					reduction[src_key] = value;
+					if (reduction[src_key] == null || (value[src_key]['datetime'] >= reduction[src_key]['datetime'])) {
+						reduction[src_key] = value[src_key];
+					}
 				}
 			} else if (typeof(value) == 'boolean') {
 				reduction['is_ps_instructor'] |= value;
 			}
 		}
-
+		
 		var canonical = reduction['ps'] || reduction['d1'];
 		if (reduction['ps'] && reduction['d1']) {
-			var interesting_keys = ['name', 'email'];
+			var keys = ['name', 'email'];
 			for (var i = 0; i < interesting_keys.length; i++) {
 				var key = interesting_keys[i];
-				var ps_datetime = DateFromISOString(reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime']);
-				var d1_datetime = DateFromISOString(reduction['d1']['attribute_revisions'][key] || reduction['d1']['datetime']);
-				
+				var ps_datetime = reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime'];
+				var d1_datetime = reduction['d1']['attribute_revisions'][key] || reduction['d1']['datetime'];
+
 				if (!(key == 'email' && reduction['is_ps_instructor']) && (d1_datetime > ps_datetime)) {
 					canonical[key] = reduction['d1'][key];
 				}
@@ -259,7 +199,9 @@ exports.d2l_user = {
 	}
 }
 
-
+// ------------------------------------------------------------
+// Views for Desire2Learn Holding Tank
+// ------------------------------------------------------------
 
 // List all mappings
 exports.d2l_list_mappings = {
@@ -469,8 +411,6 @@ exports.d2l_d1_instructor_mlist = {
 	}
     } // end of reduce function
 } // end of function def
-    
-
 
 // ------------------------------------------------------------
 // Views for Atlas Systems Ares
