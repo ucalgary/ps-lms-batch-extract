@@ -89,7 +89,8 @@ exports.processed_memberships = {
 			};
 			data['role'] = {
 				'roletype': doc['role']['@roletype'],
-				'status': doc['role']['status']
+				'status': doc['role']['status'],
+				'ares_rolename': (doc['role']['@roletype'] == '02') ? 'Instructor' : 'User'
 			};
 
 			emit([system_course_code, member_id], data);
@@ -411,29 +412,3 @@ exports.d2l_d1_instructor_mlist = {
 	}
     } // end of reduce function
 } // end of function def
-
-// ------------------------------------------------------------
-// Views for Atlas Systems Ares
-// ------------------------------------------------------------
-
-exports.ares_courseuser = {
-	map: function(doc) {
-		if (doc['type'] == 'member' && doc['role']['status'] == '1') {
-			var lmsutils = require('views/lib/lmsutils');
-			var translated_doc = {
-				'id': doc['sourcedid']['id'],
-				'membership_id': lmsutils.get_course_code(doc['membership_sourcedid']['id'], ''),
-				'role': {
-					'roletype': (doc['role']['@roletype'] == '02') ? 'Instructor' : 'User',
-					'status': doc['role']['status']
-				}
-			}
-
-			if (translated_doc['membership_id'].indexOf('_SEC', translated_doc['membership_id'].length - 4) !== -1) {
-				translated_doc['membership_id'] = translated_doc['membership_id'].substring(0, translated_doc['membership_id'].length - 4);
-			}
-
-			emit(doc._local_seq, translated_doc);
-		}
-	}
-}
