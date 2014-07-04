@@ -25,8 +25,9 @@ exports.course_information = {
 
 exports.processed_courses = {
 	map: function(doc) {
+		var lmsutils = require('views/lib/lmsutils');
+
 		if (doc['type'] == 'course') {
-			var lmsutils = require('views/lib/lmsutils');
 			var data = {};
 
 			// Parse the course code into its constituent parts
@@ -63,8 +64,12 @@ exports.processed_courses = {
 			}
 
 			emit([data['code_info']['system'], data['code_info']['system_course_code']], data);
+		} else if (doc['type'] == 'member' && doc['role']['@roletype'] == '02') {
+			var code_info = lmsutils.course_code_parse(doc['membership_sourcedid']['id']);
+
+			emit([code_info['system'], code_info['system_course_code'], 'instructor'], doc['sourcedid']['id']);
 		}
-	}
+	} 
 }
 
 exports.processed_memberships = {
