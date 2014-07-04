@@ -1,1 +1,1 @@
-{doc.membership_id}	{doc.id}	{doc.role.roletype}
+{value.membership_d2l_identifiers.offering}	{value.member}	{value.role.ares_rolename}
