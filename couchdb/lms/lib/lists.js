@@ -154,6 +154,10 @@ exports.ares_courses = function(head, req) {
 }
 
 exports.ares_courseusers = function(head, req) {
+	var courseusers_predicate = function(row) {
+		return (row['value']['role']['status'] == '1');
+	}
+
 	exports.ares_feed(head, req, 'ares_courseuser.txt', null);
 }
 
