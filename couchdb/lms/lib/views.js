@@ -40,7 +40,6 @@ exports.processed_courses = {
 			};
 
 			data['is_mapped'] = 'mapping' in doc;
-			data['description'] = doc['description'];
 
 			// Relate D2L offerings and sections to their appropriate parents
 			// Template parents differ between PeopleSoft and Destiny One
