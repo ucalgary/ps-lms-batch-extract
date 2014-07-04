@@ -172,8 +172,6 @@ exports.ares_feed = function(head, req, template) {
 	});
 
 	while (row = getRow()) {
-		send(templates.render(template, req, {
-			doc: row.doc ? row.doc : row.value
-		}));
+		send(templates.render(template, req, row));
 	}
 }
