@@ -6,13 +6,17 @@ var templates = require('duality/templates');
 
 // 1 Templates
 exports.xml4_template = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_template.xml', null);
+	var template_predicate = function(row) {
+		return (row.key.length == 2);
+	}
+
+	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate);
 }
 
 // 2 Offerings
 exports.xml4_offering = function(head, req) {
 	var offering_predicate = function(row) {
-		return !((row.doc ? row.doc : row.value)['is_mapped']);
+		return (row.key.length == 2) && !((row.doc ? row.doc : row.value)['is_mapped']);
 	}
 
 	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate);
@@ -20,7 +24,11 @@ exports.xml4_offering = function(head, req) {
 
 // 3 Sections
 exports.xml4_section = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_section.xml', null);
+	var section_predicate = function(row) {
+		return (row.key.length == 2);
+	}
+
+	exports.xml4_document(head, req, 'xml4_section.xml', section_predicate);
 }
 
 // 4 Users
