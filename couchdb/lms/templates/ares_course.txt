@@ -1,1 +1,1 @@
-{doc.course.semester}	{doc.course.courseId}	{doc.course.name}	{doc.course.courseId}	{doc.course.courseId}	{doc.instructor}
+{course.value.code_info.semester_name}	{course.value.code_info.canonical_course_code}	{course.doc.description.long}	{course.value.code_info.canonical_course_code}	{course.value.code_info.canonical_course_code}	{instructor.value}

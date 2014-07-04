@@ -116,7 +116,41 @@ exports.text_document = function(head, req, template) {
 // ------------------------------------------------------------
 
 exports.ares_courses = function(head, req) {
-	exports.ares_feed(head, req, 'ares_course.txt');
+	var row = getRow();
+	while (row != null && row.key.length != 2) {
+		row = getRow();
+	}
+
+	start({
+		code: 200,
+		headers: {
+			'Content-Type': 'text/tab-separated-values'
+		}
+	});
+
+	do {
+		var ctx = {
+			'course': row,
+			'instructor': null
+		};
+		var instructors = [];
+
+		do {
+			var candidate = getRow();
+			if (candidate == null || candidate.key.length == 2) {
+				row = candidate;
+				break;
+			}
+
+			instructors.push(candidate);
+		} while (true);
+
+		if (instructors.length > 0) {
+			ctx['instructor'] = instructors[0];
+		}
+
+		send(templates.render('ares_course.txt', req, ctx));
+	} while (row != null);
 }
 
 exports.ares_courseusers = function(head, req) {
