@@ -154,14 +154,14 @@ exports.ares_courses = function(head, req) {
 }
 
 exports.ares_courseusers = function(head, req) {
-	exports.ares_feed(head, req, 'ares_courseuser.txt');
+	exports.ares_feed(head, req, 'ares_courseuser.txt', null);
 }
 
 exports.ares_users = function(head, req) {
-	exports.ares_feed(head, req, 'ares_user.txt');
+	exports.ares_feed(head, req, 'ares_user.txt', null);
 }
 
-exports.ares_feed = function(head, req, template) {
+exports.ares_feed = function(head, req, template, predicate) {
 	var row = null;
 
 	start({
@@ -172,6 +172,8 @@ exports.ares_feed = function(head, req, template) {
 	});
 
 	while (row = getRow()) {
-		send(templates.render(template, req, row));
+		if (predicate == null || predicate(row)) {
+			send(templates.render(template, req, row));
+		}
 	}
 }
