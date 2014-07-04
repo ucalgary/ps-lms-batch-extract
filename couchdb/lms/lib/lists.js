@@ -53,9 +53,7 @@ exports.xml4_document = function(head, req, template, predicate) {
 
 	while (row = getRow()) {
 		if (predicate == null || predicate(row)) {
-			send(templates.render(template, req, {
-				doc: row.doc ? row.doc : row.value
-			}));
+			send(templates.render(template, req, row));
 		}
 	}
 
