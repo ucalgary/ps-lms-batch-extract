@@ -1,6 +1,6 @@
 	<group recstatus="2">
 		<sourcedid>
-			<id>{doc.id}</id>
+			<id>{value.d2l_identifiers.template}</id>
 		</sourcedid>
 		<grouptype>
 			<typevalue level="4">Course Template</typevalue>
@@ -9,9 +9,9 @@
 			<short>{doc.description.short}</short>
 			<long>{doc.description.long}</long>
 		</description>
-{#doc.relationships}		<relationship relation="1">
+{#value.d2l_relationships.template}		<relationship relation="1">
 			<sourcedid>
 				<id>{.}</id>
 			</sourcedid>
 		</relationship>
-{/doc.relationships}	</group>
+{/value.d2l_relationships.template}	</group>
