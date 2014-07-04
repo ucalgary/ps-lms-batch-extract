@@ -1,13 +1,13 @@
 	<person recstatus="2">
 		<sourcedid>
-			<id>{doc.canonical.id}</id>
+			<id>{key}</id>
 		</sourcedid>
-		<userid>{doc.canonical.id}</userid>
+		<userid>{key}</userid>
 		<name>
 			<n>
-				<family>{doc.canonical.name.family}</family>
-				<given>{doc.canonical.name.given}</given>
+				<family>{value.canonical.name.n.family}</family>
+				<given>{value.canonical.name.n.given}</given>
 			</n>
 		</name>
-		<email>{doc.canonical.email}</email>
+		<email>{value.canonical.email}</email>
 	</person>
