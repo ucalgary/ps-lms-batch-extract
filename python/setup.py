@@ -22,7 +22,9 @@ setup(
 	install_requires = [
 		'CouchDB>=0.9',
 		'python_daemon>=1.6',
-		'argparse>=1.1'
+		'argparse>=1.1',
+		'lxml>=3.3.5',
+		'pytz'
 	],
 
 	entry_points = {
