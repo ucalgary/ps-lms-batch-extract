@@ -27,6 +27,7 @@ setup(
 
 	entry_points = {
 		'console_scripts': [
+			'ps2couch = pslms.ps2couch:main',
 			'import-pslms-people = pslms.ps2couch:people_main',
 			'import-pslms-membership = pslms.ps2couch:membership_main',
 			'import-pslms-group = pslms.ps2couch:group_main',
