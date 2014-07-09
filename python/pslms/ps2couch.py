@@ -87,9 +87,9 @@ class PS2Couch(LMSObject):
 				'PeopleSoft': 'PS',
 				'Destiny One': 'D1'
 			}
-			doc_ids = [doc.get('sourcedid').get('id') + '-' + source_system.get(doc.get('datasource', 'Unknown'), 'NA') for doc in src_docs]
-		else:
-			doc_ids = [doc.get('sourcedid').get('id') for doc in src_docs]
+			for doc in src_docs:
+				doc['sourcedid']['id'] = doc['sourcedid']['id'] + '-' + source_system.get(doc.get('datasource', 'Unknown'), 'NA')
+		doc_ids = [doc.get('sourcedid').get('id') for doc in src_docs]
 		db_docs = [row.doc for row in target_db.view('_all_docs', keys=doc_ids, include_docs=True)]
 		updates = []
 
