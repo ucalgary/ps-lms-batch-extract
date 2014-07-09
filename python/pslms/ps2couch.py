@@ -72,7 +72,7 @@ class PS2Couch(LMSObject):
 	def process_documents(self, src_docs, target_db, process_f):
 		# Filter out source documents that do not have an id,
 		# then bulk fetch the corresponding docs from the database
-		src_docs = [doc for doc in src_docs if 'sourcedid' in doc]
+		src_docs = [doc for doc in src_docs if 'id' in doc.get('sourcedid', {})]
 		if self.args.element == 'person':
 			source_system = {
 				'PeopleSoft': 'PS',
