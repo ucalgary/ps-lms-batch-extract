@@ -126,7 +126,7 @@ class PS2Couch(LMSObject):
 		# Copy in special keys if there is an existing
 		# document in the database. Otherwise, promote _id from
 		# sourcedid.id
-		upd_doc = copy.copy(src_doc)
+		upd_doc = copy(src_doc)
 
 		if db_doc == None:
 			upd_doc['_id'] = db_doc['sourcedid']['id']
