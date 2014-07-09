@@ -159,7 +159,7 @@ class PS2Couch(LMSObject):
 		
 		membership_sourcedid = src_doc['sourcedid']
 		membership_id = membership_sourcedid['id']
-		datasource = doc['datasource']
+		datasource = src_doc['datasource']
 
 		print membership_id
 
