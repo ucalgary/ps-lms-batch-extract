@@ -161,8 +161,6 @@ class PS2Couch(LMSObject):
 		membership_id = membership_sourcedid['id']
 		datasource = src_doc['datasource']
 
-		print membership_id
-
 		# Get the set of membership document IDs currently in the data for this membership source.
 		# The difference between this set and the set of members that are about to be parsed in
 		# will have their role status set to 0, to indicate they are unenrolled.
