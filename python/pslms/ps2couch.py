@@ -52,19 +52,20 @@ class PS2Couch(LMSObject):
 
 		# Then, scan for and parse the user specified elements,
 		# batching up to batch elements before processing
-		context = etree.iterparse(self.args.file, events=('end',), tag=self.args.element)
-		for event, elem in context:
-			assert elem.tag == self.args.element
-			doc = self.etree_to_dict(elem)
-			if not 'datasource' in doc:
-				doc['datasource'] = datasource
-			if not 'datetime' in doc:
-				doc['datetime'] = datetime
-			queued_docs.append(doc)
+		with open(self.args.file, 'r') as f:
+			context = etree.iterparse(f, events=('end',), tag=self.args.element)
+			for event, elem in context:
+				assert elem.tag == self.args.element
+				doc = self.etree_to_dict(elem)
+				if not 'datasource' in doc:
+					doc['datasource'] = datasource
+				if not 'datetime' in doc:
+					doc['datetime'] = datetime
+				queued_docs.append(doc)
 
-			if len(queued_docs) >= self.args.batch:
-				self.process_documents(queued_docs, target_db, process_f)
-				queued_docs = []
+				if len(queued_docs) >= self.args.batch:
+					self.process_documents(queued_docs, target_db, process_f)
+					queued_docs = []
 
 		if len(queued_docs) > 0:
 			self.process_documents(queued_docs, target_db, process_f)
