@@ -5,7 +5,7 @@
 # -------------------
 # ps2couch D2L_EXTRACT_SUMMER_D2L2145PEOPLE.XML     person     person LMS_DATA_2145_DB
 # ps2couch D2L_EXTRACT_SUMMER_D2L2145GROUP.XML      group      course LMS_DATA_2145_DB
-# ps2couch D2L_EXTRACT_SUMMER_D2L2145MEMBERSHIP.XML membership member LMX_DATA_2145_DB
+# ps2couch D2L_EXTRACT_SUMMER_D2L2145MEMBERSHIP.XML membership member LMS_DATA_2145_DB
 
 import json
 import os
@@ -231,7 +231,7 @@ def main(args=None):
 	PS2Couch(
 		args = args
 	).run()
-	
+
 
 if __name__ == '__main__':
 	main()
