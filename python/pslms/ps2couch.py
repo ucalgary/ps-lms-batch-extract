@@ -63,11 +63,11 @@ class PS2Couch(LMSObject):
 			queued_docs.append(doc)
 
 			if len(queued_docs) >= self.args.batch:
-				process_documents(queued_docs, target_db, process_f)
+				self.process_documents(queued_docs, target_db, process_f)
 				queued_docs = []
 
 		if len(queued_docs) > 0:
-			process_documents(queued_docs, target_db, process_f)
+			self.process_documents(queued_docs, target_db, process_f)
 
 	def process_documents(self, src_docs, target_db, process_f):
 		# Filter out source documents that do not have an id,
