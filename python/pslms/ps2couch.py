@@ -24,6 +24,7 @@ class PS2Couch(LMSObject):
 		return parser
 
 	def main(self):
+		queued_docs = []
 		process_f = {
 			'membership': self.process_membership_doc,
 			'person': self.process_person_doc
@@ -48,7 +49,8 @@ class PS2Couch(LMSObject):
 			except:
 				raise
 
-		# Then, scan for and parse the user specified elements
+		# Then, scan for and parse the user specified elements,
+		# batching up to batch elements before processing
 		context = etree.iterparse(self.args.file, events=('end',), tag=self.args.element)
 		for event, elem in context:
 			assert elem.tag == self.args.element
@@ -81,6 +83,16 @@ class PS2Couch(LMSObject):
 		# Memberships are further broken down by member
 		print doc['sourcedid']['id']
 		membership_sourcedid = doc['sourcedid']
+			queued_docs.append(doc)
+
+			if len(queued_docs) >= self.args.batch:
+				for doc in queued_docs:
+					process_f(doc, target_db)
+				queued_docs = []
+
+		if len(queued_docs) > 0:
+			for doc in queued_docs:
+					process_f(doc, target_db)
 		membership_id = membership_sourcedid['id']
 		datasource = doc['datasource']
 
