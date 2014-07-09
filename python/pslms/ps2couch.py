@@ -2,6 +2,8 @@
 # coding=utf-8
 
 import json
+import os
+import progressbar
 import sys
 from copy import copy
 from lxml import etree
@@ -53,9 +55,13 @@ class PS2Couch(LMSObject):
 		# Then, scan for and parse the user specified elements,
 		# batching up to batch elements before processing
 		with open(self.args.file, 'r') as f:
+			progress = progressbar.ProgressBar(maxval=os.path.getsize(self.args.file))
+			progress.start()
+
 			context = etree.iterparse(f, events=('end',), tag=self.args.element)
 			for event, elem in context:
 				assert elem.tag == self.args.element
+				progress.update(f.tell())
 				doc = self.etree_to_dict(elem)
 				if not 'datasource' in doc:
 					doc['datasource'] = datasource
@@ -66,6 +72,8 @@ class PS2Couch(LMSObject):
 				if len(queued_docs) >= self.args.batch:
 					self.process_documents(queued_docs, target_db, process_f)
 					queued_docs = []
+
+			progress.finish()
 
 		if len(queued_docs) > 0:
 			self.process_documents(queued_docs, target_db, process_f)
