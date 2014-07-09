@@ -175,8 +175,10 @@ class PS2Couch(LMSObject):
 			if member_id == None:
 				print 'Empty id encountered'
 				continue
+			member_id = membership_id + '-' + member_id
 			
 			# Fill in the member doc
+			member['sourcedid']['id'] = member_id
 			member['membership_sourcedid'] = membership_sourcedid
 			member['type'] = self.args.type
 			member['datasource'] = src_doc['datasource']
