@@ -201,10 +201,7 @@ class PS2Couch(LMSObject):
 				updates[0]['attribute_revisions'] = attribute_revisions
 
 			for key in ('name', 'email'):
-				db_value = db_doc.get(key)
-				src_value = src_doc.get(key)
-
-				if db_value != src_value:
+				if db_doc == None or db_doc.get(key) != src_doc.get(key):
 					attribute_revisions[key] = src_doc['datetime']
 
 		return updates
