@@ -124,7 +124,7 @@ class PS2Couch(LMSObject):
 
 		# Build a set of all keys
 		# If the length of all_keys differs from doc_keys (or src_keys), then the docs differ
-		all_keys = set(src_keys) + set(doc_keys)
+		all_keys = set(src_keys) | set(doc_keys)
 		if len(all_keys) != len(doc_keys):
 			return True
 
