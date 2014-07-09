@@ -129,7 +129,7 @@ class PS2Couch(LMSObject):
 		upd_doc = copy(src_doc)
 
 		if db_doc == None:
-			upd_doc['_id'] = db_doc['sourcedid']['id']
+			upd_doc['_id'] = src_doc['sourcedid']['id']
 		else:
 			for key in ('_id', '_rev'):
 				assert key in db_doc
