@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+# Example invocations
+# -------------------
+# ps2couch D2L_EXTRACT_SUMMER_D2L2145PEOPLE.XML     person     person LMS_DATA_2145_DB
+# ps2couch D2L_EXTRACT_SUMMER_D2L2145GROUP.XML      group      course LMS_DATA_2145_DB
+# ps2couch D2L_EXTRACT_SUMMER_D2L2145MEMBERSHIP.XML membership member LMX_DATA_2145_DB
+
 import json
 import os
 import progressbar
@@ -225,21 +231,7 @@ def main(args=None):
 	PS2Couch(
 		args = args
 	).run()
-
-def people_main():
-	args = sys.argv[1:]
-	args.extend(['person', 'person', 'lms_data'])
-	main(args)
-
-def membership_main():
-	args = sys.argv[1:]
-	args.extend(['membership', 'member', 'lms_data'])
-	main(args)
-
-def group_main():
-	args = sys.argv[1:]
-	args.extend(['group', 'course', 'lms_data'])
-	main(args)
+	
 
 if __name__ == '__main__':
 	main()
