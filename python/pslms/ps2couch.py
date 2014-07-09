@@ -19,6 +19,7 @@ class PS2Couch(LMSObject):
 		parser.add_argument('element', help='The entity element name in the incoming XML data')
 		parser.add_argument('type', help='The type to use in stored JSON documents')
 		parser.add_argument('db', help='CouchDB connection name')
+		parser.add_argument('-batch', default='100', type=int, help='CouchDB bulk document batch size')
 
 		return parser
 
