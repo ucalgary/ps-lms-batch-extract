@@ -72,8 +72,8 @@ exports.xml4_document = function(head, req, template, predicate, check_f) {
 	while (row = getRow()) {
 		if ((predicate == null || predicate(row)) && (check_f == null || check_f(previous_row, row))) {
 			send(templates.render(template, req, row));
+			previous_row = row;
 		}
-		previous_row = row;
 	}
 
 	send('</enterprise>\n');
