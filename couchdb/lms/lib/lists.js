@@ -13,7 +13,14 @@ exports.xml4_template = function(head, req) {
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
-	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate, null);
+	var seq_check = function(previous_row, row) {
+		log(previous_row);
+		return (previous_row == null) ||
+           ((previous_row.value['code_info']['components'][2] != row.value['code_info']['components'][2]) ||
+            (previous_row.value['code_info']['components'][3] != row.value['code_info']['components'][3]))
+	}
+
+	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate, seq_check);
 }
 
 // 2 Offerings
