@@ -13,7 +13,7 @@ exports.xml4_template = function(head, req) {
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
-	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate);
+	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate, false, null);
 }
 
 // 2 Offerings
@@ -25,7 +25,7 @@ exports.xml4_offering = function(head, req) {
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
-	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate);
+	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate, false, null);
 }
 
 // 3 Sections
@@ -37,25 +37,26 @@ exports.xml4_section = function(head, req) {
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
-	exports.xml4_document(head, req, 'xml4_section.xml', section_predicate);
+	exports.xml4_document(head, req, 'xml4_section.xml', section_predicate, false, null);
 }
 
 // 4 Users
 exports.xml4_user = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_user.xml', null);
+	exports.xml4_document(head, req, 'xml4_user.xml', null, false, null);
 }
 
 // 5 Enrollments
 exports.xml4_enrollment = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_enrollment.xml', null);
+	exports.xml4_document(head, req, 'xml4_enrollment.xml', null, false, null);
 }
 
 // exports.xml4membership = function(head, req) {
 // 	exports.xml4document(head, req, 'membership.xml');
 // }
 
-exports.xml4_document = function(head, req, template, predicate) {
+exports.xml4_document = function(head, req, template, predicate, check_sequential_docs, check_f) {
 	var row = null;
+	var previous_row = null;
 
 	start({
 		code: 200,
@@ -69,9 +70,10 @@ exports.xml4_document = function(head, req, template, predicate) {
 	send('<enterprise>\n');
 
 	while (row = getRow()) {
-		if (predicate == null || predicate(row)) {
+		if ((predicate == null || predicate(row)) && (check_sequential_docs == false || check_f(previous_row, row))) {
 			send(templates.render(template, req, row));
 		}
+		previous_row = row;
 	}
 
 	send('</enterprise>\n');
