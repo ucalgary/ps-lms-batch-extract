@@ -3,7 +3,7 @@ exports.course_code_parse = function(course_code) {
 	var system = exports.course_code_originating_system(course_code);
 
 	if (system == 'PeopleSoft') {
-		var ps_code = course_code;
+		var ps_code = course_code.replace(/_/g, '-');
 		var ps_code_parts = ps_code.split(/[-_]/);
 		if (ps_code_parts.length != 6) return null;
 		var course_section_parts = /(\D+)(.*)/.exec(ps_code_parts[4])
