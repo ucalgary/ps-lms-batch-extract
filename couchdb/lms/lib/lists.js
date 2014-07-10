@@ -16,7 +16,10 @@ exports.xml4_template = function(head, req) {
 // 2 Offerings
 exports.xml4_offering = function(head, req) {
 	var offering_predicate = function(row) {
-		return (row.key.length == 3) && !((row.doc ? row.doc : row.value)['is_mapped']);
+		return (row.key.length == 3) &&
+		       (!row.value['is_mapped']) &&
+		       (row.key[1] == 'L' || row.key[1] == 'S') &&
+		       (row.value['code_info']['components'][4] != 'B')
 	}
 
 	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate);
