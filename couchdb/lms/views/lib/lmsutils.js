@@ -12,7 +12,7 @@ exports.course_code_parse = function(course_code) {
 		var course_year = ps_code_parts[0].substring(0, 1) + '0' + ps_code_parts[0].substring(1, 3);
 		var course_session = { 3:'P', 5:'S', 7:'F', 1:'W' }[ps_code_parts[0].charAt(3)];
 		var course_number = ps_code_parts[3].replace(/[AB]/g, '');
-		var course_AB = ps_code_parts[3].replace(/[0-9]/g, '');
+		var course_AB = ps_code_parts[3].replace(/[0-9\.]*/g, '');
 		var course_section_type = { 'LEC':'L',
 																'LECL':'L',
 																'LAB':'B',
