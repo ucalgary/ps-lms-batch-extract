@@ -63,11 +63,11 @@ exports.processed_courses = {
 				];
 			}
 
-			emit([data['code_info']['system'], data['code_info']['components'][5], data['code_info']['system_course_code']], data);
+			emit([data['code_info']['system'], data['code_info']['system_course_code']], data);
 		} else if (doc['type'] == 'member' && doc['role']['@roletype'] == '02') {
 			var code_info = lmsutils.course_code_parse(doc['membership_sourcedid']['id']);
 
-			emit([code_info['system'], code_info['components'][5], code_info['system_course_code'], 'instructor'], doc['sourcedid']['id']);
+			emit([code_info['system'], code_info['system_course_code'], 'instructor'], doc['sourcedid']['id']);
 		}
 	} 
 }

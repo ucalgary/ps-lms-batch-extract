@@ -7,9 +7,9 @@ var templates = require('duality/templates');
 // 1 Templates
 exports.xml4_template = function(head, req) {
 	var template_predicate = function(row) {
-		return (row.key.length == 3) &&
+		return (row.key.length == 2) &&
 		       (!row.value['is_mapped']) &&
-		       (row.key[1] == 'L' || row.key[1] == 'S') &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
@@ -26,9 +26,9 @@ exports.xml4_template = function(head, req) {
 // 2 Offerings
 exports.xml4_offering = function(head, req) {
 	var offering_predicate = function(row) {
-		return (row.key.length == 3) &&
+		return (row.key.length == 2) &&
 		       (!row.value['is_mapped']) &&
-		       (row.key[1] == 'L' || row.key[1] == 'S') &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
@@ -38,9 +38,9 @@ exports.xml4_offering = function(head, req) {
 // 3 Sections
 exports.xml4_section = function(head, req) {
 	var section_predicate = function(row) {
-		return (row.key.length == 3) &&
+		return (row.key.length == 2) &&
 		       (!row.value['is_mapped']) &&
-		       (row.key[1] == 'L' || row.key[1] == 'S') &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
