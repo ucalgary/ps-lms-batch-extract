@@ -7,7 +7,10 @@ var templates = require('duality/templates');
 // 1 Templates
 exports.xml4_template = function(head, req) {
 	var template_predicate = function(row) {
-		return (row.key.length == 2);
+		return (row.key.length == 3) &&
+		       (!row.value['is_mapped']) &&
+		       (row.key[1] == 'L' || row.key[1] == 'S') &&
+		       (row.value['code_info']['components'][4] != 'B')
 	}
 
 	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate);
@@ -28,7 +31,10 @@ exports.xml4_offering = function(head, req) {
 // 3 Sections
 exports.xml4_section = function(head, req) {
 	var section_predicate = function(row) {
-		return (row.key.length == 2);
+		return (row.key.length == 3) &&
+		       (!row.value['is_mapped']) &&
+		       (row.key[1] == 'L' || row.key[1] == 'S') &&
+		       (row.value['code_info']['components'][4] != 'B')
 	}
 
 	exports.xml4_document(head, req, 'xml4_section.xml', section_predicate);
