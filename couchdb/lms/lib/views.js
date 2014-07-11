@@ -82,7 +82,7 @@ exports.processed_memberships = {
 			var code_info = lmsutils.course_code_parse(doc['membership_sourcedid']['id']);
 			var system_course_code = code_info['system_course_code'];
 			
-			var member_id = doc['sourcedid']['id'];
+			var member_id = doc['role']['userid'];
 			data['member'] = member_id;
 
 			// Populate membership and role information
@@ -150,7 +150,7 @@ exports.processed_people = {
 		} else if (doc['type'] == 'member') {
 			if (doc['datasource'] == 'PeopleSoft' && doc['role']['@roletype'] == '02') {
 				var key = [
-					doc['sourcedid']['id'],
+					doc['role']['userid'],
 					'is_ps_instructor'
 				];
 
