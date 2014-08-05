@@ -97,31 +97,32 @@ exports.processed_memberships = {
 				'ares_rolename': (doc['role']['@roletype'] == '02') ? 'Instructor' : 'User'
 			};
 
-			emit([system_course_code, member_id], data);
+			// emit([system_course_code, member_id], data);
+			emit(system_course_code, data);
 		}
-	},
-
-	reduce: function(key, values, rereduce) {
-		var members = [];
-		var combined_data = {
-			'membership_d2l_identifiers': values[0]['membership_d2l_identifiers'],
-			'members': members
-		};
-		
-		for (var i =  0; i < values.length; i++) {
-			var value = values[i];
-			if (rereduce) {
-				members.push.apply(members, value['members']);
-			} else {
-				members.push({
-					'member': value['member'],
-					'role': value['role']
-				});
-			}
-		}
-
-		return combined_data;
 	}
+
+	// reduce: function(key, values, rereduce) {
+	// 	var members = [];
+	// 	var combined_data = {
+	// 		'membership_d2l_identifiers': values[0]['membership_d2l_identifiers'],
+	// 		'members': members
+	// 	};
+		
+	// 	for (var i =  0; i < values.length; i++) {
+	// 		var value = values[i];
+	// 		if (rereduce) {
+	// 			members.push.apply(members, value['members']);
+	// 		} else {
+	// 			members.push({
+	// 				'member': value['member'],
+	// 				'role': value['role']
+	// 			});
+	// 		}
+	// 	}
+
+	// 	return combined_data;
+	// }
 }
 
 exports.processed_people = {
