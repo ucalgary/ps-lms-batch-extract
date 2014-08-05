@@ -166,6 +166,24 @@ exports.processed_people = {
 			'is_ps_instructor': false
 		};
 
+		// If there is exactly one value and it's an object, shortcut the process
+		// and return that value, also setting the canonical
+		if (values.length == 1 && typeof(values[0]) == 'object') {
+			var value = values[i];
+			var src_keys = ['ps', 'd1'];
+
+			for (var j = 0; i < src_keys.length; j++) {
+				var src_key = src_keys[j];
+
+				if (value[src_key] != null) {
+					reduction['canonical'] = value[src_key];
+					break;
+				}
+			}
+
+			return reduction;
+		}
+
 		for (var i = 0; i < values.length; i++) {
 			var value = values[i];
 			if (value == null) {
