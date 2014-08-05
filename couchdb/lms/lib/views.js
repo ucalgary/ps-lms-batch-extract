@@ -168,6 +168,9 @@ exports.processed_people = {
 
 		for (var i = 0; i < values.length; i++) {
 			var value = values[i];
+			if (value == null) {
+				continue;
+			}
 
 			if (typeof(value) == 'object') {
 				var src_keys = ['ps', 'd1'];
