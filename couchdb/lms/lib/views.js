@@ -170,7 +170,6 @@ exports.processed_people = {
 			var value = values[i];
 
 			if (typeof(value) == 'object') {
-				var key = keys[i];
 				var src_keys = ['ps', 'd1'];
 
 				for (var j = 0; j < src_keys.length; j++) {
