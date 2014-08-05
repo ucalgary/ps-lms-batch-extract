@@ -186,7 +186,7 @@ exports.processed_people = {
 		
 		var canonical = reduction['ps'] || reduction['d1'];
 		if (reduction['ps'] && reduction['d1']) {
-			var keys = ['name', 'email'];
+			var interesting_keys = ['name', 'email'];
 			for (var i = 0; i < interesting_keys.length; i++) {
 				var key = interesting_keys[i];
 				var ps_datetime = reduction['ps']['attribute_revisions'][key] || reduction['ps']['datetime'];
