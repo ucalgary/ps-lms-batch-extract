@@ -14,7 +14,6 @@ exports.xml4_template = function(head, req) {
 	}
 
 	var seq_check = function(previous_row, row) {
-		log(previous_row);
 		return (previous_row == null) ||
            ((previous_row.value['code_info']['components'][2] != row.value['code_info']['components'][2]) ||
             (previous_row.value['code_info']['components'][3] != row.value['code_info']['components'][3]))
