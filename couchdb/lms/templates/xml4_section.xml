@@ -7,7 +7,7 @@
 		</grouptype>
 		<description>
 			<short>{value.d2l_identifiers.section}</short>
-			<long>{doc.description.short}</long>
+			<long>{value.code_info.subject_and_number} {value.code_info.course_section}</long>
 		</description>
 {#value.d2l_relationships.section}		<relationship relation="1">
 			<sourcedid>

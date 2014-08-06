@@ -11,7 +11,7 @@
 		</timeframe>
 		<description>
 			<short>{value.code_info.canonical_course_code}</short>
-			<long>{doc.description.long}</long>
+			<long>{value.code_info.subject_and_number} {value.code_info.course_section} - ({value.code_info.semester_name}) - {doc.description.long}</long>
 		</description>
 {#value.d2l_relationships.offering}		<relationship relation="1">
 			<sourcedid>
