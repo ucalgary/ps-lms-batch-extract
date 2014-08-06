@@ -31,7 +31,14 @@ exports.xml4_offering = function(head, req) {
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
-	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate, null);
+	var section_concatenator = function(previous_row, row) {
+		var section = row.value['code_info']['components'][5] + row.value['code_info']['components'][6];
+		row.value['code_info']['course_section'] = section;
+
+		return true;
+	}
+
+	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate, section_concatenator);
 }
 
 // 3 Sections
@@ -43,7 +50,14 @@ exports.xml4_section = function(head, req) {
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
-	exports.xml4_document(head, req, 'xml4_section.xml', section_predicate, null);
+	var section_concatenator = function(previous_row, row) {
+		var section = row.value['code_info']['components'][5] + row.value['code_info']['components'][6];
+		row.value['code_info']['course_section'] = section;
+
+		return true;
+	}
+
+	exports.xml4_document(head, req, 'xml4_section.xml', section_predicate, section_concatenator);
 }
 
 // 4 Users
