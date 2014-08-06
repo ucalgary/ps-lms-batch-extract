@@ -178,7 +178,7 @@ exports.processed_people = {
 			var value = values[i];
 			var src_keys = ['ps', 'd1'];
 
-			for (var j = 0; i < src_keys.length; j++) {
+			for (var j = 0; j < src_keys.length; j++) {
 				var src_key = src_keys[j];
 
 				if (value[src_key] != null) {
