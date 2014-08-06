@@ -34,8 +34,13 @@ exports.processed_courses = {
 			data['code_info'] = lmsutils.course_code_parse(doc['sourcedid']['id']);
 
 			// Create identifiers for this course's D2L template, offering, and section
+			var template_id = data['code_info']['subject_and_number'].replace(' ', '_');
+			var template_id_dot_idx = template_id.lastIndexOf('.');
+			if (template_id_dot_idx != -1) {
+				template_id = template_id.substring(0, template_id_dot_idx);
+			}
 			data['d2l_identifiers'] = {
-				'template': data['code_info']['subject_and_number'].replace(' ', '_'),
+				'template': template_id,
 				'offering': data['code_info']['canonical_course_code'],
 				'section': data['code_info']['canonical_course_code'] + '_SEC'
 			};
