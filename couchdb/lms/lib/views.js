@@ -175,7 +175,7 @@ exports.processed_people = {
 		// If there is exactly one value and it's an object, shortcut the process
 		// and return that value, also setting the canonical
 		if (values.length == 1 && typeof(values[0]) == 'object') {
-			var value = values[i];
+			var value = values[0];
 			var src_keys = ['ps', 'd1'];
 
 			for (var j = 0; j < src_keys.length; j++) {
