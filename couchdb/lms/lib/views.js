@@ -52,7 +52,7 @@ exports.d2l_template = {
 			{
 			    var lmsutils = require('views/lib/lmsutils');
 			    var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
-			    var base_number = /(\d+).*/.exec(subject_and_number[1])[1];
+			    var base_number = subject_and_number[1].replace(/\D/g,'');     // just get the digits
 			    var suffix = '';
 			    
 			    // keep Qatar templates separate so that they are organized in their
