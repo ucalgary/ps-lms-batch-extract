@@ -7,7 +7,7 @@
 		</grouptype>
 		<description>
 			<short>{value.d2l_identifiers.template}</short>
-			<long>{value.code_info.subject_and_number}</long>
+			<long>{value.d2l_identifiers.template}</long>
 		</description>
 {#value.d2l_relationships.template}		<relationship relation="1">
 			<sourcedid>
