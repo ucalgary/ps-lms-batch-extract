@@ -1,1 +1,1 @@
-{doc.canonical.id}	{doc.canonical.id}	{doc.canonical.name.given}	{doc.canonical.name.family}	{doc.canonical.email}	User	0	User	ares	Yes
+{key}	{key}	{value.canonical.name.n.given}	{value.canonical.name.n.family}	{value.canonical.email}	User	0	User	ares	Yes

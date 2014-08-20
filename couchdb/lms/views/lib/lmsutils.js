@@ -1,3 +1,99 @@
+// Parse course codes into usable parts
+exports.course_code_parse = function(course_code) {
+	var system = exports.course_code_originating_system(course_code);
+
+	if (system == 'PeopleSoft') {
+		var ps_code = course_code.replace(/_/g, '-');
+		var ps_code_parts = ps_code.split(/[-_]/);
+		if (ps_code_parts.length != 6) return null;
+		var course_section_parts = /(\D+)(.*)/.exec(ps_code_parts[4])
+
+		// Separate out the PeopleSoft code into its components
+		var course_year = ps_code_parts[0].substring(0, 1) + '0' + ps_code_parts[0].substring(1, 3);
+		var course_session = { 3:'P', 5:'S', 7:'F', 1:'W' }[ps_code_parts[0].charAt(3)];
+		var course_number = ps_code_parts[3].replace(/[AB]/g, '');
+		var course_AB = ps_code_parts[3].replace(/[0-9\.]*/g, '');
+		var course_section_type = { 'LEC':'L',
+																'LECL':'L',
+																'LAB':'B',
+																'LABB':'B',
+																'TUT':'T',
+																'TUTT':'T',
+																'SEMS':'S',
+																'SEM':'S',
+																'ALL':'ALL' }[course_section_parts[1]];
+		var course_section_number = course_section_parts[2].replace(/\D/g, '');
+		var course_components = [
+			course_session,					// 0: single character semester (P, S, F, W)
+			course_year,						// 1: four digit year (2014)
+			ps_code_parts[2],				// 2: subject code (ENGL)
+			course_number,					// 3: course number (201)
+			course_AB,							// 4: A/B section or neither
+			course_section_type,		// 5: single character section (L, B, T, S, C, P)
+			course_section_number		// 6: section number (01)
+		];
+
+		// Generate a Blackboard-style course code
+		var bb_course_components = course_components.slice();
+		bb_course_components[4] = bb_course_components[4].replace(/A/g, 'AB');
+		var bb_course_code = bb_course_components.join('').replace(/\./g, '');
+
+		// Generate a human-readable semester name
+		var course_year = ps_code_parts[0].substring(0, 1) + '0' + ps_code_parts[0].substring(1, 3);
+		var course_session = { 1:'Winter', 3:'Spring', 5:'Summer', 7:'Fall' }[ps_code_parts[0].charAt(3)];
+		var human_readable_semester = course_session + ' ' + course_year;
+
+		// Generate a basic subject and number
+		var subject_and_number = ps_code_parts[2] + ' ' + course_number;
+
+		// Return the results
+		return {
+			'system': system,
+			'components': course_components,
+			'system_course_code': ps_code,
+			'canonical_course_code': bb_course_code,
+			'subject_and_number': subject_and_number,
+			'semester': ps_code_parts[0],
+			'semester_name': human_readable_semester
+		};
+	} else if (system == 'Destiny One') {
+		var course_code_parts = course_code.split('_');
+		var course_components = [
+			null,										// 0: single character semester (P, S, F, W)
+			null,										// 1: four digit year (2014)
+			course_code_parts[0],		// 2: subject code (WRI)
+			course_code_parts[1],		// 3: course number (201)
+			null,										// 4: A/B section or neither
+			null,										// 5: single character section (L, B, T, S, C, P)
+			course_code_parts[2]		// 6: section number (011)
+		];
+
+		return {
+			'system': system,
+			'components': course_components,
+			'system_course_code': course_code,
+			'canonical_course_code': course_code,
+			'subject_and_number': course_code_parts[0] + ' ' + course_code_parts[1],
+			'semester': 'CTED',
+			'semester_name': 'Continuing Education'
+		};
+	}
+	
+	return null;
+}
+
+// Deduce originating system based on course codes
+exports.course_code_originating_system = function(course_code) {
+	if (/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]$/.test(course_code)) {
+		return 'Destiny One';
+	} else if (/^\d\d\d\d-UCALG/.test(course_code)) {
+		return 'PeopleSoft';
+	} else {
+		return null;
+	}
+}
+
+
 // determines what to do with course ID
 exports.get_course_code = function(raw_id, ps_suffix) {
     var course_id = '';

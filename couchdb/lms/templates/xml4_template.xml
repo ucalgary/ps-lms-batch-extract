@@ -1,17 +1,17 @@
 	<group recstatus="2">
 		<sourcedid>
-			<id>{doc.id}</id>
+			<id>{value.d2l_identifiers.template}</id>
 		</sourcedid>
 		<grouptype>
 			<typevalue level="4">Course Template</typevalue>
 		</grouptype>
 		<description>
-			<short>{doc.description.short}</short>
-			<long>{doc.description.long}</long>
+			<short>{value.d2l_identifiers.template}</short>
+			<long>{value.d2l_identifiers.template}</long>
 		</description>
-{#doc.relationships}		<relationship relation="1">
+{#value.d2l_relationships.template}		<relationship relation="1">
 			<sourcedid>
 				<id>{.}</id>
 			</sourcedid>
 		</relationship>
-{/doc.relationships}	</group>
+{/value.d2l_relationships.template}	</group>

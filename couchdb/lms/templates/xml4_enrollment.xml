@@ -1,13 +1,13 @@
 	<membership recstatus="2">
 		<sourcedid>
-			<id>{doc.membership_id}</id>
+			<id>{value.membership_d2l_identifiers.section}</id>
 		</sourcedid>
 		<member>
 			<sourcedid>
-				<id>{doc.id}</id>
+				<id>{value.member}</id>
 			</sourcedid>
-			<role roletype="{doc.role.roletype}">
-				<status>{doc.role.status}</status>
+			<role roletype="{value.role.roletype}">
+				<status>{value.role.status}</status>
 			</role>
 		</member>
 	</membership>

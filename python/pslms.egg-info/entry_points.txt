@@ -1,9 +1,0 @@
-[console_scripts]
-import-pslms-group = pslms.ps2couch:group_main
-export-d2l-users = pslms.couch2d2l:users_main
-import-pslms-membership = pslms.ps2couch:membership_main
-export-d2l-enrollments = pslms.couch2d2l:enrollments_main
-import-pslms-people = pslms.ps2couch:people_main
-export-d2l-offerings = pslms.couch2d2l:offerings_main
-export-d2l-templates = pslms.couch2d2l:templates_main
-

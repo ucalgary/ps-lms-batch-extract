@@ -1,6 +1,6 @@
 	<group recstatus="2">
 		<sourcedid>
-			<id>{doc.id}</id>
+			<id>{value.d2l_identifiers.offering}</id>
 		</sourcedid>
 		<grouptype>
 			<typevalue level="5">Course Offering</typevalue>
@@ -10,15 +10,15 @@
 			<end></end>
 		</timeframe>
 		<description>
-			<short>{doc.id}</short>
-			<long>{doc.description.long}</long>
+			<short>{value.code_info.canonical_course_code}</short>
+			<long>{value.code_info.subject_and_number} {value.code_info.course_section} - ({value.code_info.semester_name}) - {doc.description.long}</long>
 		</description>
-{#doc.relationships}		<relationship relation="1">
+{#value.d2l_relationships.offering}		<relationship relation="1">
 			<sourcedid>
 				<id>{.}</id>
 			</sourcedid>
 		</relationship>
-{/doc.relationships}		<extension>
+{/value.d2l_relationships.offering}		<extension>
 			<status>0</status>
 		</extension>
 	</group>

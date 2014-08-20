@@ -6,39 +6,77 @@ var templates = require('duality/templates');
 
 // 1 Templates
 exports.xml4_template = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_template.xml', null);
+	var template_predicate = function(row) {
+		return (row.key.length == 2) &&
+		       (!row.value['is_mapped']) &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
+		       (row.value['code_info']['components'][4] != 'B')
+	}
+
+	var seq_check = function(previous_row, row) {
+		return (previous_row == null) ||
+           ((previous_row.value['code_info']['components'][2] != row.value['code_info']['components'][2]) ||
+            (previous_row.value['code_info']['components'][3] != row.value['code_info']['components'][3]))
+	}
+
+	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate, seq_check);
 }
 
 // 2 Offerings
 exports.xml4_offering = function(head, req) {
 	var offering_predicate = function(row) {
-		return !((row.doc ? row.doc : row.value)['is_mapped']);
+		return (row.key.length == 2) &&
+		       (!row.value['is_mapped']) &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
+		       (row.value['code_info']['components'][4] != 'B')
 	}
 
-	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate);
+	var section_concatenator = function(previous_row, row) {
+		var section = row.value['code_info']['components'][5] + row.value['code_info']['components'][6];
+		row.value['code_info']['course_section'] = section;
+
+		return true;
+	}
+
+	exports.xml4_document(head, req, 'xml4_offering.xml', offering_predicate, section_concatenator);
 }
 
 // 3 Sections
 exports.xml4_section = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_section.xml', null);
+	var section_predicate = function(row) {
+		return (row.key.length == 2) &&
+		       (!row.value['is_mapped']) &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
+		       (row.value['code_info']['components'][4] != 'B')
+	}
+
+	var section_concatenator = function(previous_row, row) {
+		var section = row.value['code_info']['components'][5] + row.value['code_info']['components'][6];
+		row.value['code_info']['course_section'] = section;
+
+		return true;
+	}
+
+	exports.xml4_document(head, req, 'xml4_section.xml', section_predicate, section_concatenator);
 }
 
 // 4 Users
 exports.xml4_user = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_user.xml', null);
+	exports.xml4_document(head, req, 'xml4_user.xml', null, null);
 }
 
 // 5 Enrollments
 exports.xml4_enrollment = function(head, req) {
-	exports.xml4_document(head, req, 'xml4_enrollment.xml', null);
+	exports.xml4_document(head, req, 'xml4_enrollment.xml', null, null);
 }
 
 // exports.xml4membership = function(head, req) {
 // 	exports.xml4document(head, req, 'membership.xml');
 // }
 
-exports.xml4_document = function(head, req, template, predicate) {
+exports.xml4_document = function(head, req, template, predicate, check_f) {
 	var row = null;
+	var previous_row = null;
 
 	start({
 		code: 200,
@@ -52,10 +90,9 @@ exports.xml4_document = function(head, req, template, predicate) {
 	send('<enterprise>\n');
 
 	while (row = getRow()) {
-		if (predicate == null || predicate(row)) {
-			send(templates.render(template, req, {
-				doc: row.doc ? row.doc : row.value
-			}));
+		if ((predicate == null || predicate(row)) && (check_f == null || check_f(previous_row, row))) {
+			send(templates.render(template, req, row));
+			previous_row = row;
 		}
 	}
 
@@ -110,18 +147,56 @@ exports.text_document = function(head, req, template) {
 // ------------------------------------------------------------
 
 exports.ares_courses = function(head, req) {
-	exports.ares_feed(head, req, 'ares_course.txt');
+	var row = getRow();
+	while (row != null && row.key.length != 2) {
+		row = getRow();
+	}
+
+	start({
+		code: 200,
+		headers: {
+			'Content-Type': 'text/tab-separated-values'
+		}
+	});
+
+	do {
+		var ctx = {
+			'course': row,
+			'instructor': null
+		};
+		var instructors = [];
+
+		do {
+			var candidate = getRow();
+			if (candidate == null || candidate.key.length == 2) {
+				row = candidate;
+				break;
+			}
+
+			instructors.push(candidate);
+		} while (true);
+
+		if (instructors.length > 0) {
+			ctx['instructor'] = instructors[0];
+		}
+
+		send(templates.render('ares_course.txt', req, ctx));
+	} while (row != null);
 }
 
 exports.ares_courseusers = function(head, req) {
-	exports.ares_feed(head, req, 'ares_courseuser.txt');
+	var courseusers_predicate = function(row) {
+		return (row['value']['role']['status'] == '1');
+	}
+
+	exports.ares_feed(head, req, 'ares_courseuser.txt', null);
 }
 
 exports.ares_users = function(head, req) {
-	exports.ares_feed(head, req, 'ares_user.txt');
+	exports.ares_feed(head, req, 'ares_user.txt', null);
 }
 
-exports.ares_feed = function(head, req, template) {
+exports.ares_feed = function(head, req, template, predicate) {
 	var row = null;
 
 	start({
@@ -132,8 +207,8 @@ exports.ares_feed = function(head, req, template) {
 	});
 
 	while (row = getRow()) {
-		send(templates.render(template, req, {
-			doc: row.doc ? row.doc : row.value
-		}));
+		if (predicate == null || predicate(row)) {
+			send(templates.render(template, req, row));
+		}
 	}
 }

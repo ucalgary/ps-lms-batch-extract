@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import os
 import sys
 
 from couchdb.client import Database
@@ -98,17 +99,18 @@ class LMSObject(BaseObject):
 		return self._named_client(name, self.create_couchdb_client)
 		
 	def _named_client(self, name, create_f):
-		info = self._connection_info.get(name)
-		
-		if not info:
+		key_prefix = name + '_'
+		info_keys = [key for key in os.environ.keys() if key.startswith(key_prefix)]
+		if len(info_keys) == 0:
 			return None
+		info = { key[len(key_prefix):]: os.environ[key] for key in info_keys }
 			
-		if 'url' in info:
-			url = info['url']
-		elif 'resource' in info:
+		if 'URL' in info:
+			url = info['URL']
+		elif 'RESOURCE' in info:
 			import pkg_resources
 		
-			path = pkg_resources.resource_filename('adsm', info['resource'])
+			path = pkg_resources.resource_filename('adsm', info['RESOURCE'])
 			url = 'file://%s' % path
 			
 		args = info.get('args', {})
