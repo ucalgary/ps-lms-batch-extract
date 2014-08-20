@@ -28,7 +28,49 @@ exports.processed_courses = {
 		var lmsutils = require('views/lib/lmsutils');
 
 		if (doc['type'] == 'course') {
+<<<<<<< HEAD
 			var data = {};
+=======
+		    // Check for ContEd course code first
+		    if(/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]/.test(doc['sourcedid']['id'])){
+			var template_id =  doc['sourcedid']['id'].replace(/_[0-9][0-9][0-9]$/g, "") // strip away lecture number
+			var translated_doc = {
+			    'id': template_id,
+			    'description': {
+				'short': template_id,
+				'long': template_id,
+			    },
+			    'relationships': [ "CONTED" ] // department code
+			} // end of translated_doc
+		    } // end of processing D1 data
+		    else // PS course
+			{
+			    var lmsutils = require('views/lib/lmsutils');
+			    var subject_and_number = lmsutils.subject_and_number_from_ps_code(doc['sourcedid']['id']);
+			    var base_number = subject_and_number[1].replace(/\D/g,'');     // just get the digits
+			    var suffix = '';
+			    
+			    // keep Qatar templates separate so that they are organized in their
+			    // own faculty/department
+			    if (doc['org']['id'] == 'QA') {
+				suffix = 'Q';
+			    }
+			    
+			    var translated_doc = {
+				'id': subject_and_number[0] + '_' + base_number + suffix,
+				'description': {
+				                'short': subject_and_number[0] + '_' + base_number + suffix,
+						'long': subject_and_number[0] + ' ' + base_number + suffix
+				},
+				'relationships': [
+						  doc['org']['id']		// department code (eg: HA)
+						  ]
+			    } // end of translated_doc
+			} // end of processing PS data
+		    emit(translated_doc['id'], translated_doc);
+		}
+	},
+>>>>>>> master
 
 			// Parse the course code into its constituent parts
 			data['code_info'] = lmsutils.course_code_parse(doc['sourcedid']['id']);
