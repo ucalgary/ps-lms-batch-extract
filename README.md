@@ -1,3 +1,3 @@
 # PeopleSoft LMS Batch Extract
 
-Python scripts and CouchDB design documents used to ingest IMS Enterprise data from PeopleSoft, transform into feeds for Desire2Learn (D2L) XML4 with University of Calgary (U of C) preferred data representations, and load into U of C's D2L Holding Tanks.
+This repository contains [CouchDB design documents](http://wiki.apache.org/couchdb/HTTP_view_API) and Python scripts used for integrations between PeopleSoft, [Destiny One](http://conted.ucalgary.ca/), [Desire2Learn](https://d2l.ucalgary.ca/), and [Ares](https://ares.ucalgary.ca/ares/) at the University of Calgary. The name of this repository is a misnomer.
