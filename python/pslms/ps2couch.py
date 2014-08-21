@@ -170,7 +170,9 @@ class PS2Couch(LMSObject):
 		# Get the set of membership document IDs currently in the data for this membership source.
 		# The difference between this set and the set of members that are about to be parsed in
 		# will have their role status set to 0, to indicate they are unenrolled.
-		existing_members = {row.key:row.doc for row in db.view('_all_docs', startkey=membership_id + '-', endkey=membership_id + '-{}', include_docs=True)}
+		# Dictionary comprehension replaced for Python 2.6 compatibility	
+		# existing_members = {row.key:row.doc for row in db.view('_all_docs', startkey=membership_id + '-', endkey=membership_id + '-{}', include_docs=True)}
+		existing_members = dict((row.key, row.doc) for row in db.view('_all_docs', startkey=membership_id + '-', endkey=membership_id + '-{}', include_docs=True))
 		updates = []
 
 		members = (src_doc['member'],) if isinstance(src_doc['member'], dict) else src_doc['member']

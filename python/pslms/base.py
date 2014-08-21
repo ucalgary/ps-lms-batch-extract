@@ -103,7 +103,10 @@ class LMSObject(BaseObject):
 		info_keys = [key for key in os.environ.keys() if key.startswith(key_prefix)]
 		if len(info_keys) == 0:
 			return None
-		info = { key[len(key_prefix):]: os.environ[key] for key in info_keys }
+
+		# Dictionary comprehension replaced for Python 2.6 compatibility
+		# info = { key[len(key_prefix):]: os.environ[key] for key in info_keys }
+		info = dict((key[len(key_prefix):], os.environ[key]) for key in info_keys)
 			
 		if 'URL' in info:
 			url = info['URL']
