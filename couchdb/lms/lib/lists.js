@@ -9,7 +9,7 @@ exports.xml4_template = function(head, req) {
 	var template_predicate = function(row) {
 		return (row.key.length == 2) &&
 		       (!row.value['is_mapped']) &&
-		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S' || row.value['lmsexport']['include'] == '1') &&
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
@@ -27,7 +27,7 @@ exports.xml4_offering = function(head, req) {
 	var offering_predicate = function(row) {
 		return (row.key.length == 2) &&
 		       (!row.value['is_mapped']) &&
-		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S' || row.value['lmsexport']['include'] == '1') &&
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
@@ -45,7 +45,7 @@ exports.xml4_offering = function(head, req) {
 exports.xml4_section = function(head, req) {
 	var section_predicate = function(row) {
 		return (row.key.length == 2) &&
-		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S') &&
+		       (row.value['code_info']['components'][5] == 'L' || row.value['code_info']['components'][5] == 'S' || row.value['lmsexport']['include'] == '1') &&
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
