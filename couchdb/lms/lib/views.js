@@ -45,7 +45,9 @@ exports.processed_courses = {
 				'section': data['code_info']['canonical_course_code'] + '_SEC'
 			};
 
+			// Determine mapping and export override status
 			data['is_mapped'] = 'mapping' in doc;
+			data['is_included'] = 'lmsexport' in doc && 'include' in doc['lmsexport'] && doc['lmsexport']['include'] == '1';
 
 			// Relate D2L offerings and sections to their appropriate parents
 			// Template parents differ between PeopleSoft and Destiny One
