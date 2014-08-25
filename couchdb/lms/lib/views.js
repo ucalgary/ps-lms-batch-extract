@@ -89,7 +89,13 @@ exports.processed_memberships = {
 			var code_info = lmsutils.course_code_parse(doc['membership_sourcedid']['id']);
 			var system_course_code = code_info['system_course_code'];
 			
+			// Extract the member id
 			var member_id = doc['role']['userid'];
+			if (member_id == null) {
+				var source_id = doc['sourcedid']['id'];
+				var sep_idx = source_id.lastIndexOf('-');
+				member_id = source_id.substring(sep_idx + 1);
+			}
 			data['member'] = member_id;
 
 			// Populate membership and role information
