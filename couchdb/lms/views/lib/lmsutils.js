@@ -71,8 +71,8 @@ exports.course_code_parse = function(course_code) {
 		return {
 			'system': system,
 			'components': course_components,
-			'system_course_code': course_code,
-			'canonical_course_code': course_code,
+			'system_course_code': course_code_parts[0] + '_' + course_code_parts[1] + '_' + course_code_parts[2],
+			'canonical_course_code': course_code_parts[0] + '_' + course_code_parts[1] + '_' + course_code_parts[2],
 			'subject_and_number': course_code_parts[0] + ' ' + course_code_parts[1],
 			'semester': 'CTED',
 			'semester_name': 'Continuing Education'
