@@ -32,7 +32,11 @@ exports.xml4_offering = function(head, req) {
 	}
 
 	var section_concatenator = function(previous_row, row) {
-		var section = row.value['code_info']['components'][5] + row.value['code_info']['components'][6];
+		var section = '';
+		if (row.value['code_info']['components'][5] != null)
+			section += row.value['code_info']['components'][5];
+		if (row.value['code_info']['components'][6] != null)
+			section += row.value['code_info']['components'][6];
 		row.value['code_info']['course_section'] = section;
 
 		return true;
@@ -50,7 +54,11 @@ exports.xml4_section = function(head, req) {
 	}
 
 	var section_concatenator = function(previous_row, row) {
-		var section = row.value['code_info']['components'][5] + row.value['code_info']['components'][6];
+		var section = '';
+		if (row.value['code_info']['components'][5] != null)
+			section += row.value['code_info']['components'][5];
+		if (row.value['code_info']['components'][6] != null)
+			section += row.value['code_info']['components'][6];
 		row.value['code_info']['course_section'] = section;
 
 		return true;
