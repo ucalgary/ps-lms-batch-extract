@@ -84,7 +84,7 @@ exports.course_code_parse = function(course_code) {
 
 // Deduce originating system based on course codes
 exports.course_code_originating_system = function(course_code) {
-	if (/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]$/.test(course_code)) {
+	if (/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]/.test(course_code)) {
 		return 'Destiny One';
 	} else if (/^\d\d\d\d-UCALG/.test(course_code)) {
 		return 'PeopleSoft';
