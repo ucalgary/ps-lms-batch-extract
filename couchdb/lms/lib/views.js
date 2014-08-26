@@ -400,13 +400,17 @@ exports.d2l_d1_instructor_mlist = {
 
 	// just get the instructors
 	if (doc['type'] == 'member' && doc['role']['status'] == "1" && doc['role']['@roletype'] == "02" && doc['datasource'] == "Destiny One") {
+
+	    // get the UCID
+	    var ucid = doc['sourcedid']['id'].replace(/\w\w\w_\d\d\d_\d\d\d_SEC-/g, '');
+
 	    translated_doc = {
-		'id': doc['sourcedid']['id'],
+		'id': ucid,
 		'courseid': doc['membership_sourcedid']['id'],
 		'datasource': doc['datasource'],
 		'type': doc['type']
 	    }
-	    emit(doc['sourcedid']['id'], translated_doc);
+	    emit(ucid, translated_doc);
 	}
 	else if (doc['type'] == 'person' && doc['datasource'] == "Destiny One") {  // get the user info
 	    translated_doc = {
