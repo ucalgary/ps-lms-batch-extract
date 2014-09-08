@@ -54,7 +54,8 @@ exports.processed_courses = {
 			data['d2l_relationships'] = {
 				'offering': [
 					data['code_info']['semester'],															// semester (eg: 2141)
-					data['code_info']['subject_and_number'].replace(' ', '_')		// template (eg: ACCT_217)
+					// template (eg: ACCT_217) and remove decimal codes from template (eg: BIOL_601.01 becomes BIOL_601)
+					data['code_info']['subject_and_number'].replace(' ', '_').replace(/\.\d\d/, '')
 				],
 				'section': [
 					lmsutils.course_code_parse('mapping' in doc ? doc['mapping']['sourcedid']['id'] : doc['sourcedid']['id'])['canonical_course_code']
