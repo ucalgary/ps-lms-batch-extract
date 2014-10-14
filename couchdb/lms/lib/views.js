@@ -211,7 +211,7 @@ exports.processed_people = {
 				for (var j = 0; j < src_keys.length; j++) {
 					var src_key = src_keys[j];
 
-					if (reduction[src_key] == null || (value[src_key]['datetime'] >= reduction[src_key]['datetime'])) {
+					if (reduction[src_key] == null || (value[src_key] != null && value[src_key]['datetime'] >= reduction[src_key]['datetime'])) {
 						reduction[src_key] = value[src_key];
 					}
 				}
