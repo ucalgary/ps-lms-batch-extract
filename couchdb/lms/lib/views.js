@@ -231,6 +231,10 @@ exports.processed_people = {
 				if (!(key == 'email' && reduction['is_ps_instructor']) && (d1_datetime > ps_datetime)) {
 					canonical[key] = reduction['d1'][key];
 				}
+
+				if (key == 'email' && canonical['email'] == 'NoEmail@ucalgary.ca') {
+					canonical['email'] = reduction['d1']['email'];
+				}
 			}
 		}
 		reduction['canonical'] = canonical;
