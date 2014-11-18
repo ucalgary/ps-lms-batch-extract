@@ -196,7 +196,7 @@ exports.ares_courseusers = function(head, req) {
 		return (row['value']['role']['status'] == '1');
 	}
 
-	exports.ares_feed(head, req, 'ares_courseuser.txt', null);
+	exports.ares_feed(head, req, 'ares_courseuser.txt', courseusers_predicate);
 }
 
 exports.ares_users = function(head, req) {
