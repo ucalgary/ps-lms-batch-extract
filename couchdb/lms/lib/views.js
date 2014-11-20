@@ -39,6 +39,10 @@ exports.processed_courses = {
 			if (template_id_dot_idx != -1) {
 				template_id = template_id.substring(0, template_id_dot_idx);
 			}
+			if (doc['org']['id'] == 'QA') {
+				// Adjust the template for Qatar courses. They use custom templates ending in Q.
+				template_id += 'Q';
+			}
 			data['d2l_identifiers'] = {
 				'template': template_id,
 				'offering': data['code_info']['canonical_course_code'],
