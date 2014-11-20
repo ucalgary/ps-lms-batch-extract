@@ -34,11 +34,7 @@ exports.processed_courses = {
 			data['code_info'] = lmsutils.course_code_parse(doc['sourcedid']['id']);
 
 			// Create identifiers for this course's D2L template, offering, and section
-			var template_id = data['code_info']['subject_and_number'].replace(' ', '_');
-			var template_id_dot_idx = template_id.lastIndexOf('.');
-			if (template_id_dot_idx != -1) {
-				template_id = template_id.substring(0, template_id_dot_idx);
-			}
+			var template_id = data['code_info']['subject_and_number'].replace(' ', '_').replace(/\.\d\d/, '');
 			if (doc['org']['id'] == 'QA') {
 				// Adjust the template for Qatar courses. They use custom templates ending in Q.
 				template_id += 'Q';
