@@ -35,7 +35,7 @@ exports.processed_courses = {
 
 			// Create identifiers for this course's D2L template, offering, and section
 			var template_id = data['code_info']['subject_and_number'].replace(' ', '_').replace(/\.\d\d/, '');
-			if (doc['org']['id'] == 'QA') {
+			if ('org' in doc && doc['org']['id'] == 'QA') {
 				// Adjust the template for Qatar courses. They use custom templates ending in Q.
 				template_id += 'Q';
 			}
