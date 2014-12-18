@@ -13,13 +13,23 @@ exports.xml4_template = function(head, req) {
 		       (row.value['code_info']['components'][4] != 'B')
 	}
 
-	var seq_check = function(previous_row, row) {
-		return (previous_row == null) ||
-           ((previous_row.value['code_info']['components'][2] != row.value['code_info']['components'][2]) ||
-            (previous_row.value['code_info']['components'][3] != row.value['code_info']['components'][3]))
-	}
+	// keep track of all templates we have so far
+	var templates = [];
 
-	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate, seq_check);
+	var template_check = function(previous_row, row) {
+	    var template_name = row.value['d2l_identifiers']['template'];
+	    
+	    // this is a new template we don't have yet
+	    if(templates.indexOf(template_name) == -1) {
+		templates.push(template_name);		    
+		return true;
+	    } else {
+		// repeat template
+		return false;
+	    }
+	}
+	
+	exports.xml4_document(head, req, 'xml4_template.xml', template_predicate, template_check);
 }
 
 // 2 Offerings
