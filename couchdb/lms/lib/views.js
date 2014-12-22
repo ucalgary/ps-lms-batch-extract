@@ -39,6 +39,12 @@ exports.processed_courses = {
 				// Adjust the template for Qatar courses. They use custom templates ending in Q.
 				template_id += 'Q';
 			}
+
+			// prefix 'CE_' to Cont Ed templates
+			if(/^[A-Z][A-Z][A-Z]_[0-9][0-9][0-9]_[0-9][0-9][0-9]/.test(doc['sourcedid']['id'])){
+			    template_id = 'CE_' + template_id;
+			}
+
 			data['d2l_identifiers'] = {
 				'template': template_id,
 				'offering': data['code_info']['canonical_course_code'],
