@@ -164,6 +164,33 @@ exports.text_document = function(head, req, template) {
 // ------------------------------------------------------------
 
 exports.ares_courses = function(head, req) {
+	var date = new Date();
+	var year = date.getFullYear();
+	var semester = 'Unknown';
+	switch (date.getMonth() + 1) {
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			semester = 'Winter';
+			break;
+		case 5:
+		case 6:
+			semester = 'Spring';
+			break;
+		case 7:
+		case 8:
+			semester = 'Summer';
+			break;
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+			semester = 'Fall';
+			break;
+	}
+	var assumed_semester = semester + ' ' + year;
+
 	var row = getRow();
 	while (row != null && row.key.length != 2) {
 		row = getRow();
@@ -179,7 +206,8 @@ exports.ares_courses = function(head, req) {
 	do {
 		var ctx = {
 			'course': row,
-			'instructor': null
+			'instructor': null,
+			'semester': row.value.code_info.semester_name == 'Continuing Education' ? assumed_semester : row.value.code_info.semester_name
 		};
 		var instructors = [];
 
