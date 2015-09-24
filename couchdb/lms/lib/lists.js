@@ -168,26 +168,28 @@ exports.ares_courses = function(head, req) {
 	var year = date.getFullYear();
 	var semester = 'Unknown';
 	switch (date.getMonth() + 1) {
+		case 12:
+			year += 1;
 		case 1:
 		case 2:
 		case 3:
-		case 4:
 			semester = 'Winter';
 			break;
+		case 4:
 		case 5:
-		case 6:
 			semester = 'Spring';
 			break;
+		case 6:
 		case 7:
-		case 8:
 			semester = 'Summer';
 			break;
+		case 8:
 		case 9:
 		case 10:
 		case 11:
-		case 12:
 			semester = 'Fall';
 			break;
+
 	}
 	var assumed_semester = semester + ' ' + year;
 
