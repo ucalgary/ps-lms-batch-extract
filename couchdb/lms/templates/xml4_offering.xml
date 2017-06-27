@@ -7,7 +7,7 @@
 		</grouptype>
 		<timeframe>
 			<begin></begin>
-			<end></end>
+			<end>{value.dates.expire}</end>
 		</timeframe>
 		<description>
 			<short>{value.code_info.canonical_course_code}</short>
