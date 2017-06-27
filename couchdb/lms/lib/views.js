@@ -79,6 +79,27 @@ exports.processed_courses = {
 
 			// Include course begin, end, and expiry dates.
 			// The expiry date is the course end date plus one year.
+			if ('timeframe' in doc) {
+				expiry = doc['timeframe']['end']['#text'];
+				if (expiry) {
+					d = new Date(expiry);
+					d.setFullYear(d.getFullYear() + 1);
+					expiry = d.toISOString();
+					expiry = expiry.substring(0, expiry.indexOf('T'));
+				}
+				data['dates'] = {
+					'begin': doc['timeframe']['begin']['#text'],
+					'end': doc['timeframe']['end']['#text'],
+					'expire': expiry
+				}
+			} else {
+				data['dates'] = {
+					'begin': '',
+					'end': '',
+					'expire': ''
+				}
+			}
+
 			expiry = doc['timeframe']['end']['#text'];
 			if (expiry) {
 				d = new Date(expiry);
