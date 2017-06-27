@@ -81,8 +81,10 @@ exports.processed_courses = {
 			// The expiry date is the course end date plus one year.
 			expiry = doc['timeframe']['end']['#text'];
 			if (expiry) {
-				d = new Date(expiry)
-				expiry = (d.getFullYear() + 1) + '-' + (d.getMonth() + 1) + '-' + (d.getDate());
+				d = new Date(expiry);
+				d.setFullYear(d.getFullYear() + 1);
+				expiry = d.toISOString();
+				expiry = expiry.substring(0, expiry.indexOf('T'));
 			}
 			data['dates'] = {
 				'begin': doc['timeframe']['begin']['#text'],
