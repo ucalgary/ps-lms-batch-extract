@@ -34,7 +34,9 @@ setup(
 			'export-d2l-templates = pslms.couch2d2l:templates_main',
 			'export-d2l-offerings = pslms.couch2d2l:offerings_main',
 			'export-d2l-users = pslms.couch2d2l:users_main',
-			'export-d2l-enrollments = pslms.couch2d2l:enrollments_main'
+			'export-d2l-enrollments = pslms.couch2d2l:enrollments_main',
+
+			'ce2couch = pslms.ce2couch:main'
 		]
 	},
 
