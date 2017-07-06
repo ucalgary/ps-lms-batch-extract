@@ -100,19 +100,6 @@ exports.processed_courses = {
 				}
 			}
 
-			expiry = doc['timeframe']['end']['#text'];
-			if (expiry) {
-				d = new Date(expiry);
-				d.setFullYear(d.getFullYear() + 1);
-				expiry = d.toISOString();
-				expiry = expiry.substring(0, expiry.indexOf('T'));
-			}
-			data['dates'] = {
-				'begin': doc['timeframe']['begin']['#text'],
-				'end': doc['timeframe']['end']['#text'],
-				'expire': expiry
-			}
-
 			emit([data['code_info']['system'], data['code_info']['system_course_code']], data);
 		} else if (doc['type'] == 'member' && doc['role']['@roletype'] == '02') {
 			var code_info = lmsutils.course_code_parse(doc['membership_sourcedid']['id']);
