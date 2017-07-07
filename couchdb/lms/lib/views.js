@@ -82,10 +82,9 @@ exports.processed_courses = {
 			if ('timeframe' in doc) {
 				expiry = doc['timeframe']['end']['#text'];
 				if (expiry) {
-					d = new Date(expiry);
-					d.setFullYear(d.getFullYear() + 1);
-					expiry = d.toISOString();
-					expiry = expiry.substring(0, expiry.indexOf('T'));
+					expiry_components = expiry.split('-');
+					expiry_components[0] = (parseInt(expiry_components[0]) + 1).toString();
+					expiry = expiry_components.join('-');
 				}
 				data['dates'] = {
 					'begin': doc['timeframe']['begin']['#text'],
@@ -98,19 +97,6 @@ exports.processed_courses = {
 					'end': '',
 					'expire': ''
 				}
-			}
-
-			expiry = doc['timeframe']['end']['#text'];
-			if (expiry) {
-				d = new Date(expiry);
-				d.setFullYear(d.getFullYear() + 1);
-				expiry = d.toISOString();
-				expiry = expiry.substring(0, expiry.indexOf('T'));
-			}
-			data['dates'] = {
-				'begin': doc['timeframe']['begin']['#text'],
-				'end': doc['timeframe']['end']['#text'],
-				'expire': expiry
 			}
 
 			emit([data['code_info']['system'], data['code_info']['system_course_code']], data);
