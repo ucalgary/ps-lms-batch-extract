@@ -24,7 +24,8 @@ setup(
 		'python_daemon>=1.6',
 		'argparse>=1.1',
 		'lxml>=3.3.5',
-		'pytz'
+		'pytz',
+                'pymssql'
 	],
 
 	entry_points = {
